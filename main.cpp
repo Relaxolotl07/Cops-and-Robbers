@@ -31,52 +31,7 @@ bool checkMovement(Node** grid, int x, int y, int newX, int newY) {
     if (abs(newX - x) > 1 || abs(newY - y) > 1) {
         return false;
     }
-
-
-    if (grid[x][y].hasCop()) {
-        if (grid[newX][newY].isEmpty()) {
-            return true;
-        }
-    } else if (grid[x][y].hasRobber()) {
-        if (grid[newX][newY].isEmpty()) {
-            return true;
-        }
-    }
     return true;
-}
-
-//deprecated
-void moveCop(Node** grid, int x, int y) {
-    int gridSize = sizeof(grid) / sizeof(grid[0]);
-    int newX, newY;
-    // Check all possible movements
-    for (int i = -1; i <= 1; i++) {
-        for (int j = -1; j <= 1; j++) {
-            newX = x + i;
-            newY = y + j;
-            if (checkMovement(grid, x, y, newX, newY)) {
-                move(grid, x, y, newX, newY);
-                return;
-            }
-        }
-    }
-}
-
-//deprecated
-void moveRobber(Node** grid, int x, int y, int robberSpeed) {
-    int gridSize = sizeof(grid) / sizeof(grid[0]);
-    int newX, newY;
-    // Check all possible movements
-    for (int i = -robberSpeed; i <= robberSpeed; i++) {
-        for (int j = -robberSpeed; j <= robberSpeed; j++) {
-            newX = x + i;
-            newY = y + j;
-            if (checkMovement(grid, x, y, newX, newY)) {
-                move(grid, x, y, newX, newY);
-                return;
-            }
-        }
-    }
 }
 
 int main() {

@@ -12,10 +12,8 @@ struct Node{
     
     void setCop() {
         isCop = true;
-        isRobber = false;
     }
     void setRobber() {
-        isCop = false;
         isRobber = true;
     }
     void removeCop() {
@@ -32,6 +30,9 @@ struct Node{
     }
     bool isEmpty() {
         return !isCop && !isRobber;
+    }
+    bool copWin() {
+        return isCop && isRobber;
     }
     void print() {
         if (isCop) {
