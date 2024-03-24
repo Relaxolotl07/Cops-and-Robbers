@@ -41,6 +41,7 @@ int main() {
     // simType is either 't' for turn-based cop control or 'c' for continuous 
     char simType; 
     int moves = 0;
+    int maxMoves;
 
     // Read the input
     cout << "Enter the dimensions of the square grid: ";
@@ -51,6 +52,8 @@ int main() {
     cin >> robberSpeed;
     cout << "Enter the simulation type (t for turn-based, c for continuous): ";
     cin >> simType;
+    cout << "Enter the maximum number of moves: ";
+    cin >> maxMoves;
 
     // Create the grid
     Node** grid = new Node*[gridSize];
@@ -87,6 +90,14 @@ int main() {
         cout << endl;
     }
 
-
+    bool copWin = false;
+    // Run the simulation
+    do {
+        if (simType == 't'){    
+        }
+        else if (simType == 'c') {
+        }
+    }
+    while (!copWin && moves < maxMoves);
     return 0;
 }
