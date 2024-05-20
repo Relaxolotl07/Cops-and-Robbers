@@ -13,6 +13,8 @@ class Grid {
         int maxMoves;
 
         Node** grid;
+        Node* robber;
+        Node* cops; // array of cops
 
     public:
         Grid(int gridSize, int copNum, int robberSpeed, char simType, int maxMoves) {
@@ -31,23 +33,32 @@ class Grid {
             // Initialize the grid
             for (int i = 0; i < gridSize; i++) {
                 for (int j = 0; j < gridSize; j++) {
-                    grid[i][j] = Node();
+                    grid[i][j] = Node(i, j);
                 }
             }
 
+            cops = new Node[copNum];
             // Place the cops
             for (int i = 0; i < copNum; i++) {
                 int x, y;
                 cout << "Enter the coordinates of cop " << i + 1 << ": ";
                 cin >> x >> y;
                 grid[x][y].setCop();
+
+                for (int i = 0; i < copNum; i++) {
+                    cops[i] = grid[x][y];
+                }
             }
 
+        
             // Place the robber
             int x, y;
             cout << "Enter the coordinates of the robber: ";
             cin >> x >> y;
             grid[x][y].setRobber();
+
+            robber = &grid[x][y]; 
+
         }
 
         void print() {
@@ -60,13 +71,21 @@ class Grid {
         }
 
         void move(int x, int y, int newX, int newY) {
-            if (grid[newX][newY].isEmpty()) {
+            if (checkMovement(x, y, newX, newY)) {
                 if (grid[x][y].hasCop()) {
                     grid[newX][newY].setCop();
                     grid[x][y].removeCop();
+                    
+                    for (int i = 0; i < copNum; i++) {
+                        if (&cops[i] == &grid[x][y]) {
+                            cops[i] = grid[newX][newY];
+                        }
+                    }
                 } else if (grid[x][y].hasRobber()) {
                     grid[newX][newY].setRobber();
                     grid[x][y].removeRobber();
+
+                    robber = &grid[newX][newY];
                 }
             }
         }
@@ -80,12 +99,54 @@ class Grid {
             if (abs(newX - x) > 1 || abs(newY - y) > 1) {
                 return false;
             }
+            //check if the new position is empty
+            if (!grid[newX][newY].isEmpty()) {
+                return false;
+            }
+
             return true;
         }
 
+
+        // Calculate the best direction for the robber to move, 1 = north, 2 = east, 3 = south, 4 = west
         int calculateBestDirection() {
+            // Call recursive function:
             
+            // north
+            int north = calculateBestDirection(robber->x, robber->y, robber->x, robber->y - 1, 0); 
+            // east
+            int east = calculateBestDirection(robber->x, robber->y, robber->x + 1, robber->y, 0);
+            // south
+            int south = calculateBestDirection(robber->x, robber->y, robber->x, robber->y + 1, 0);
+            // west
+            int west = calculateBestDirection(robber->x, robber->y, robber->x - 1, robber->y, 0);
+
+            // return the best direction. 
+            if (north > east && north > south && north > west) {
+                return 1;
+            } else if (east > north && east > south && east > west) {
+                return 2;
+            } else if (south > north && south > east && south > west) {
+                return 3;
+            } else {
+                return 4;
+            }
+            return 0;
         }
 
+        int calculateBestDirection(int x, int y, int newX, int newY, int time) {
+            //base case: if the robber is caught
+            if (grid[newX][newY].hasCop()) { // replace .hasCop with whatever implementation used later
+                return time;
+            }
+
+            //check if intersect with cop ROC
+            //code
+
+
+
+
+            
+        }
 
 };  

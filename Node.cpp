@@ -2,13 +2,22 @@
 using namespace std;
 
 struct Node{
-
     bool isCop;
     bool isRobber;
+    int x;
+    int y;
+
     Node() {
         isCop = false;
         isRobber = false;
-        }
+    }
+
+    Node(int x, int y) {
+        this->x = x;
+        this->y = y;
+        isCop = false;
+        isRobber = false;
+    }
     
     void setCop() {
         isCop = true;
@@ -33,6 +42,12 @@ struct Node{
     }
     bool copWin() {
         return isCop && isRobber;
+    }
+    int getX() {
+        return x;
+    }
+    int getY() {
+        return y;
     }
     void print() {
         if (isCop) {
