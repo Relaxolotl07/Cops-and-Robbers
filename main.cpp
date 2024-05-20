@@ -19,6 +19,8 @@ void move(Node** grid, int x, int y, int newX, int newY) {
         }
     }
 }
+//test
+
 
 // Function to check if the movement is valid
 bool checkMovement(Node** grid, int x, int y, int newX, int newY) {
