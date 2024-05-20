@@ -4,7 +4,7 @@
 #include <fstream>
 #include <sstream>
 #include <vector>
-#include "Node.cpp"
+#include "Grid.cpp"
 using namespace std;
 
 // Function to move the cops and the robber
@@ -37,14 +37,8 @@ bool checkMovement(Node** grid, int x, int y, int newX, int newY) {
 }
 
 int main() {
-    int copNum;
-    int robberSpeed;
-    int gridSize;
-    // simType is either 't' for turn-based cop control or 'c' for continuous 
-    char simType; 
-    int moves = 0;
-    int maxMoves;
-
+    int gridSize, copNum, robberSpeed, maxMoves;
+    char simType;
     // Read the input
     cout << "Enter the dimensions of the square grid: ";
     cin >> gridSize;
@@ -57,49 +51,16 @@ int main() {
     cout << "Enter the maximum number of moves: ";
     cin >> maxMoves;
 
-    // Create the grid
-    Node** grid = new Node*[gridSize];
-    for (int i = 0; i < gridSize; i++) {
-        grid[i] = new Node[gridSize];
-    }
+    Grid grid(gridSize, copNum, robberSpeed, simType, maxMoves);
+    grid.print();
 
-    // Initialize the grid
-    for (int i = 0; i < gridSize; i++) {
-        for (int j = 0; j < gridSize; j++) {
-            grid[i][j] = Node();
-        }
-    }
-
-    // Place the cops
-    for (int i = 0; i < copNum; i++) {
-        int x, y;
-        cout << "Enter the coordinates of cop " << i + 1 << ": ";
-        cin >> x >> y;
-        grid[x][y].setCop();
-    }
-
-    // Place the robber
-    int x, y;
-    cout << "Enter the coordinates of the robber: ";
-    cin >> x >> y;
-    grid[x][y].setRobber();
-
-    // Print the grid
-    for (int i = 0; i < gridSize; i++) {
-        for (int j = 0; j < gridSize; j++) {
-            grid[i][j].print();
-        }
-        cout << endl;
-    }
-
-    bool copWin = false;
     // Run the simulation
-    do {
-        if (simType == 't'){    
-        }
-        else if (simType == 'c') {
-        }
-    }
-    while (!copWin && moves < maxMoves);
+    // do {
+    //     if (simType == 't'){    
+    //     }
+    //     else if (simType == 'c') {
+    //     }
+    // }
+    // while (!copWin && moves < maxMoves);
     return 0;
 }
