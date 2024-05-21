@@ -11,6 +11,8 @@ class Grid {
         char simType; 
         int moves = 0;
         int maxMoves;
+        vector<int> pastMoves;
+        
 
         Node** grid;
         Node* robber;
@@ -109,7 +111,7 @@ class Grid {
 
 
         // Calculate the best direction for the robber to move, 1 = north, 2 = east, 3 = south, 4 = west
-        int calculateBestDirection() {
+        int huntersAlg() {
             // Call recursive function:
             
             // north
@@ -140,13 +142,13 @@ class Grid {
                 return time;
             }
 
-            //check if intersect with cop ROC
+            //check if intersect with cop ROC (make function for separate gridstate using COP ROCs)
             //code
 
 
 
-
-            
+            //optimization theory: run each iteration by timestep (to conserve cop ROC)
+            //use pattern searching with last e steps to predict next step and find a robberWin
         }
 
 };  
