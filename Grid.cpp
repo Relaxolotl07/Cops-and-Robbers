@@ -1,4 +1,4 @@
-#include "Node.cpp"
+#include "Grid.h"
 
 using namespace std;
 
