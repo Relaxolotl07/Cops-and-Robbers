@@ -65,14 +65,18 @@ int main() {
                     break;
                 case 'r': //down
                     //robber move
-
+                    cout << "What direction do you want the robber to move in?" << endl;
+                    cin >> directional;
+                    grid.friendlyMove(directional);
                     // call cop movement function
 
                     // print grid
                     break;
-                case 'a':  //left
+                case 'a':  
                     //call robber movement function
-
+                    cout << "What direction do you want the robber to move in?" << endl;
+                    cin >> directional;
+                    grid.friendlyMove(directional);
                     //call cop movement function
 
                     // print grid
