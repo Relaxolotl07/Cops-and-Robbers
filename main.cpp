@@ -33,7 +33,7 @@ int main() {
     do {
         if (simType == 't'){    
             //switch case in here
-            cout << "1. 2. 3. 4."
+            cout << "1. 2. 3. 4.";
             cin >> selection;
             switch(selection){
                 case 1: //up
