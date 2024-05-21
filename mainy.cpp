@@ -174,7 +174,7 @@ int main() {
     bool copWin = false;
     int turn = 0;
     while (turn < maxMoves && !copWin) {
-        cout << "Turn " << turn + 1 << ":" << endl;
+        cout << "t= " << turn + 1 << endl;
         moveRobber(grid, robX, robY, gridSize, copPositions);
         moveCops(grid, copPositions, robX, robY, gridSize, copWin);
 
