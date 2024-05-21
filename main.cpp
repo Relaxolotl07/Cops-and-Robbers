@@ -42,7 +42,7 @@ int main() {
             switch(selection){
                 case 'm': 
                     char var = 0;
-                    while (var != -1)
+                    while (var != 'q')
                     {
                         //robber moves 2 times
                         for (int i = 0; i < robberSpeed; ++i) {
@@ -70,6 +70,7 @@ int main() {
                     // call cop movement function
 
                     // print grid
+
                     break;
                 case 'a':  
                     //call robber movement function
@@ -92,7 +93,7 @@ int main() {
         else if (simType == 'c') {
             // do later
         }
-    }
-    while (grid.getMoves() < maxMoves && tempFlag);
+    } while (grid.getMoves() < maxMoves && tempFlag);
+
     return 0;
 }
