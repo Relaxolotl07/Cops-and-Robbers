@@ -104,10 +104,16 @@ void Grid::insertGridPos() {
 }
 
 
-bool robberWinCheck() {
+bool Grid::robberWinCheck() {
     //hash search
+    int hash = pastPosHash();
 
-    //if current grid pos = past grid pos, return true;
+    for (auto& grid : pastPos[hash]) {
+        if (grid.robber->x == robber->x && grid.robber->y == robber->y) {
+            return true;
+        }
+    }
+    return false;
 }
 
 
@@ -195,7 +201,7 @@ int Grid::calculateBestDirection(int x, int y, int newX, int newY, int time) {
     //code
 
 
-
+    return 0;
     //optimization theory: run each iteration by timestep (to conserve cop ROC)
     //use pattern searching with last e steps to predict next step and find a robberWin
 }
