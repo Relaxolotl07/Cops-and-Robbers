@@ -39,17 +39,26 @@ int main() {
             cout << "q. Quit" << endl;
             cin >> selection;
             switch(selection){
-                case 'm': //up
-                    //code for robber moving
-                    //robber is placed
-                    //coordinates are set from grid print
-                    // so update y coordinate by +2 
+                case 'm': 
+                    //robber move
+
+                    //cop move
+
+                    // print grid
                     break;
                 case 'r': //down
-                    //code
+                    //robber move
+
+                    // call cop movement function
+
+                    // print grid
                     break;
                 case 'a':  //left
-                    //code
+                    //call robber movement function
+
+                    //call cop movement function
+
+                    // print grid
                     break;
                 case 'q':
                     tempFlag = false;
