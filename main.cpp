@@ -30,6 +30,7 @@ int main() {
 
     bool tempFlag = true;
     char selection;
+    char directional;
     do {
         if (simType == 't'){    
             //switch case in here
@@ -40,11 +41,27 @@ int main() {
             cin >> selection;
             switch(selection){
                 case 'm': 
-                    //robber move
+                    char var = 0;
+                    while (var != -1)
+                    {
+                        //robber moves 2 times
+                        for (int i = 0; i < robberSpeed; ++i) {
+                            cout << "What direction do you want the robber to move in?" << endl;
+                            cin >> directional;
+                            grid.friendlyMove(directional);
+                        }
 
-                    //cop move
+                        //Print grid
 
-                    // print grid
+                        //cop move
+                        
+
+                        // print grid
+
+                        cout << "Exit (q), press any other key to continue." << endl;
+                        cin >> var;
+                    }
+
                     break;
                 case 'r': //down
                     //robber move
