@@ -45,7 +45,7 @@ class Grid {
                 int x, y;
                 cout << "Enter the coordinates of cop " << i + 1 << ": ";
                 cin >> x >> y;
-                grid[x][y].setCop();
+                grid[--x][--y].setCop();
 
                 for (int i = 0; i < copNum; i++) {
                     cops[i] = grid[x][y];
@@ -57,10 +57,11 @@ class Grid {
             int x, y;
             cout << "Enter the coordinates of the robber: ";
             cin >> x >> y;
-            grid[x][y].setRobber();
+            grid[--x][--y].setRobber();
 
             robber = &grid[x][y]; 
 
+            cout << "Grid initialized" << endl;
         }
 
         void print() {

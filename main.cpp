@@ -16,23 +16,28 @@ int main() {
     cin >> gridSize;
     cout << "Enter the number of cops: ";
     cin >> copNum;
-    cout << "Enter the speed of the robber: ";
-    cin >> robberSpeed;
+    // cout << "Enter the speed of the robber: ";
+    // cin >> robberSpeed;
+    robberSpeed = 2;
     cout << "Enter the simulation type (t for turn-based, c for continuous): ";
     cin >> simType;
     cout << "Enter the maximum number of moves: ";
     cin >> maxMoves;
 
     Grid grid(gridSize, copNum, robberSpeed, simType, maxMoves);
+    
     grid.print();
 
-    // Run the simulation
-    // do {
-    //     if (simType == 't'){    
-    //     }
-    //     else if (simType == 'c') {
-    //     }
-    // }
-    // while (!copWin && moves < maxMoves);
+    bool tempFlag = true;
+    do {
+        if (simType == 't'){    
+            
+
+        }
+        else if (simType == 'c') {
+            // do later
+        }
+    }
+    while (true);
     return 0;
 }
