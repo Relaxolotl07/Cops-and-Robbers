@@ -1,6 +1,8 @@
 #include <iostream>
 #include <cstring>
 #include <vector>
+#include <cmath>
+#include <list>
 using namespace std;
 
 struct Node{
