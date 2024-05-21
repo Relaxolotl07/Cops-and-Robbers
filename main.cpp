@@ -29,9 +29,32 @@ int main() {
     grid.print();
 
     bool tempFlag = true;
+    char selection;
     do {
         if (simType == 't'){    
-            
+            //switch case in here
+            cout << "1. 2. 3. 4."
+            cin >> selection;
+            switch(selection){
+                case 1: //up
+                    //code for robber moving
+                    //robber is placed
+                    //coordinates are set from grid print
+                    // so update y coordinate by +2 
+                    break;
+                case 2: //down
+                    //code
+                    break;
+                case 3:  //left
+                    //code
+                    break;
+                case 4:  //right
+                    //code
+                    break;
+                default:
+                    //code
+                    break;
+            }
 
         }
         else if (simType == 'c') {
