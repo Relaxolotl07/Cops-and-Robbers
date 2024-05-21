@@ -33,26 +33,29 @@ int main() {
     do {
         if (simType == 't'){    
             //switch case in here
-            cout << "1. 2. 3. 4."
+            cout << "m. Manual Movement" << endl;
+            cout << "r. Robber Control Movement" << endl;
+            cout << "a. Automatic Movement" << endl;
+            cout << "q. Quit" << endl;
             cin >> selection;
             switch(selection){
-                case 1: //up
+                case 'm': //up
                     //code for robber moving
                     //robber is placed
                     //coordinates are set from grid print
                     // so update y coordinate by +2 
                     break;
-                case 2: //down
+                case 'r': //down
                     //code
                     break;
-                case 3:  //left
+                case 'a':  //left
                     //code
                     break;
-                case 4:  //right
-                    //code
+                case 'q':
+                    tempFlag = false;
                     break;
                 default:
-                    //code
+                    cout << "Invalid selection" << endl;
                     break;
             }
 
@@ -61,6 +64,6 @@ int main() {
             // do later
         }
     }
-    while (true);
+    while (grid.getMoves() < maxMoves && tempFlag);
     return 0;
 }

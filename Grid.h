@@ -34,6 +34,10 @@ class Grid {
         
         void print();
 
+        int getMoves();
+
+        void friendlyMove(char direction);
+
         void move(int x, int y, int newX, int newY);
 
         bool checkMovement(int x, int y, int newX, int newY);

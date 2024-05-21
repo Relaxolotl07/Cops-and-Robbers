@@ -116,6 +116,10 @@ bool Grid::robberWinCheck() {
     return false;
 }
 
+int Grid::getMoves() {
+    return moves;
+}
+
 
 void Grid::print() {
     for (int i = 0; i < gridSize; i++) {
@@ -123,6 +127,18 @@ void Grid::print() {
             grid[i][j].print();
         }
         cout << endl;
+    }
+}
+
+void Grid::friendlyMove(char direction) {
+    if (direction == 'w') {
+        move(robber->x, robber->y, robber->x, robber->y - 1);
+    } else if (direction == 'd') {
+        move(robber->x, robber->y, robber->x + 1, robber->y);
+    } else if (direction == 's') {
+        move(robber->x, robber->y, robber->x, robber->y + 1);
+    } else if (direction == 'a') {
+        move(robber->x, robber->y, robber->x - 1, robber->y);
     }
 }
 
@@ -137,13 +153,23 @@ void Grid::move(int x, int y, int newX, int newY) {
                     cops[i] = grid[newX][newY];
                 }
             }
+
+            //check if the cop wins
+
         } else if (grid[x][y].hasRobber()) {
             grid[newX][newY].setRobber();
             grid[x][y].removeRobber();
 
             robber = &grid[newX][newY];
+
+            if (moves % 5 == 4) 
+                if (robberWinCheck()) {
+                    cout << "Robber wins!" << endl;
+                    exit(0);
+                }
         }
     }
+    moves++;
 }
 
 bool Grid::checkMovement(int x, int y, int newX, int newY) {
