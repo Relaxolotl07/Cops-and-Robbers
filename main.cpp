@@ -53,10 +53,9 @@ int main() {
 
                         //Print grid
 
-                        //cop move
+                        //Cop move
                         
-
-                        // print grid
+                        //Print grid
 
                         cout << "Exit (q), press any other key to continue." << endl;
                         cin >> var;
