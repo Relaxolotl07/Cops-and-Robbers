@@ -30,29 +30,49 @@ int main() {
 
     bool tempFlag = true;
     char selection;
+    char directional;
     do {
         if (simType == 't'){    
             //switch case in here
-            cout << "1. 2. 3. 4.";
+            cout << "m. Manual Movement" << endl;
+            cout << "r. Robber Control Movement" << endl;
+            cout << "a. Automatic Movement" << endl;
+            cout << "q. Quit" << endl;
             cin >> selection;
             switch(selection){
-                case 1: //up
-                    //code for robber moving
-                    //robber is placed
-                    //coordinates are set from grid print
-                    // so update y coordinate by +2 
+                case 'm': 
+                    //robber move
+                    cout << "What direction do you want the robber to move in?" << endl;
+                    cin >> directional;
+                    grid.friendlyMove(directional);
+
+                    //cop move
+
+                    // print grid
                     break;
-                case 2: //down
-                    //code
+                case 'r': //down
+                    //robber move
+                    cout << "What direction do you want the robber to move in?" << endl;
+                    cin >> directional;
+                    grid.friendlyMove(directional);
+                    // call cop movement function
+
+                    // print grid
                     break;
-                case 3:  //left
-                    //code
+                case 'a':  
+                    //call robber movement function
+                    cout << "What direction do you want the robber to move in?" << endl;
+                    cin >> directional;
+                    grid.friendlyMove(directional);
+                    //call cop movement function
+
+                    // print grid
                     break;
-                case 4:  //right
-                    //code
+                case 'q':
+                    tempFlag = false;
                     break;
                 default:
-                    //code
+                    cout << "Invalid selection" << endl;
                     break;
             }
 
@@ -61,6 +81,6 @@ int main() {
             // do later
         }
     }
-    while (true);
+    while (grid.getMoves() < maxMoves && tempFlag);
     return 0;
 }
