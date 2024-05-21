@@ -36,19 +36,23 @@ class Grid {
 
         int getMoves();
 
-        void friendlyMove(char direction);
+        void RobberFriendlyMove(char direction);
 
-        void move(int x, int y, int newX, int newY);
+        void CopFriendlyMove(vector<char> directions);
 
-        bool checkMovement(int x, int y, int newX, int newY);
+        void move(int row, int col, int newX, int newY);
+
+        bool checkMovement(int row, int col, int newX, int newY);
 
 
         // Calculate the best direction for the robber to move, 1 = north, 2 = east, 3 = south, 4 = west
         int huntersAlg();
 
-        int calculateBestDirection(int x, int y, int newX, int newY, int time);
+        int calculateBestDirection(int row, int col, int newX, int newY, int time);
 
         bool robberWinCheck();
+
+        void growCopROC();
 };  
 
 #endif

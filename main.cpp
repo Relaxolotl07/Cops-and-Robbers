@@ -31,6 +31,7 @@ int main() {
     bool tempFlag = true;
     char selection;
     char directional;
+    char var = ' ';
     do {
         if (simType == 't'){    
             //switch case in here
@@ -41,45 +42,58 @@ int main() {
             cin >> selection;
             switch(selection){
                 case 'm': 
-                    char var = 0;
+
                     while (var != 'q')
                     {
                         //robber moves 2 times
                         for (int i = 0; i < robberSpeed; ++i) {
                             cout << "What direction do you want the robber to move in?" << endl;
                             cin >> directional;
-                            grid.friendlyMove(directional);
+                            grid.RobberFriendlyMove(directional);
                         }
 
                         //Print grid
+                        grid.print();
 
                         //Cop move
-                        
+                        vector<char> copDirections;
+                        for (int i = 0; i < copNum; ++i) {
+                            cout << "What direction do you want cop " << i + 1 << " to move?" << endl;
+                            cin >> directional;
+                            copDirections.push_back(directional);
+                        }
+                        grid.CopFriendlyMove(copDirections);
+
                         //Print grid
+                        grid.print();
 
                         cout << "Exit (q), press any other key to continue." << endl;
                         cin >> var;
                     }
 
                     break;
-                case 'r': //down
+                case 'r': 
                     //robber move
                     cout << "What direction do you want the robber to move in?" << endl;
                     cin >> directional;
-                    grid.friendlyMove(directional);
+                    grid.RobberFriendlyMove(directional);
                     // call cop movement function
 
                     // print grid
+                    grid.print();
+
 
                     break;
                 case 'a':  
                     //call robber movement function
                     cout << "What direction do you want the robber to move in?" << endl;
                     cin >> directional;
-                    grid.friendlyMove(directional);
+                    grid.RobberFriendlyMove(directional);
                     //call cop movement function
 
                     // print grid
+                    grid.print();
+                    
                     break;
                 case 'q':
                     tempFlag = false;

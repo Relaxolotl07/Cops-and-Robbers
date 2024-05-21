@@ -23,24 +23,24 @@ Grid::Grid(Grid* parent) {
     cops = new Node[copNum];
     // Place the cops
     for (int i = 0; i < copNum; i++) {
-        int x, y;
-        x = parent->cops[i].getX();
-        y = parent->cops[i].getY();
-        grid[x][y].setCop();
+        int col, row;
+        col = parent->cops[i].getX();
+        row = parent->cops[i].getY();
+        grid[col][row].setCop();
 
         for (int i = 0; i < copNum; i++) {
-            cops[i] = grid[x][y];
+            cops[i] = grid[row][col];
         }
     }
 
 
     // Place the robber
-    int x, y;
-    x = parent->robber->getX();
-    y = parent->robber->getY();
-    grid[x][y].setRobber();
+    int col, row;
+    col = parent->robber->getX();
+    row = parent->robber->getY();
+    grid[row][col].setRobber();
 
-    robber = &grid[x][y]; 
+    robber = &grid[row][col]; 
 }
 
 Grid::Grid(int gridSize, int copNum, int robberSpeed, char simType, int maxMoves) {
@@ -66,24 +66,25 @@ Grid::Grid(int gridSize, int copNum, int robberSpeed, char simType, int maxMoves
     cops = new Node[copNum];
     // Place the cops
     for (int i = 0; i < copNum; i++) {
-        int x, y;
+        int col, row;
         cout << "Enter the coordinates of cop " << i + 1 << ": ";
-        cin >> x >> y;
-        grid[--x][--y].setCop();
+        cin >> row >> col;
+        grid[--row][--col].setCop();
 
         for (int i = 0; i < copNum; i++) {
-            cops[i] = grid[x][y];
+            cops[i] = grid[row][col];
         }
     }
 
 
     // Place the robber
-    int x, y;
+    int col, row;
     cout << "Enter the coordinates of the robber: ";
-    cin >> x >> y;
-    grid[--x][--y].setRobber();
-
-    robber = &grid[x][y]; 
+    cin >> col >> row;
+    cout << row << " " << col << endl;
+    grid[--row][--col].setRobber();
+    cout << col << " " << row << endl;
+    robber = &grid[row][col]; 
 
     pastPos = vector<list<Grid>>(gridSize * gridSize);
 
@@ -92,7 +93,7 @@ Grid::Grid(int gridSize, int copNum, int robberSpeed, char simType, int maxMoves
 
 int Grid::pastPosHash() {
     int hash = 0;
-    hash = robber->x * gridSize + robber->y;
+    hash = robber->col * gridSize + robber->row;
     return hash % (gridSize * gridSize);
 }
 
@@ -109,7 +110,7 @@ bool Grid::robberWinCheck() {
     int hash = pastPosHash();
 
     for (auto& grid : pastPos[hash]) {
-        if (grid.robber->x == robber->x && grid.robber->y == robber->y) {
+        if (grid.robber->col == robber->col && grid.robber->row == robber->row) {
             return true;
         }
     }
@@ -122,45 +123,82 @@ int Grid::getMoves() {
 
 
 void Grid::print() {
+    int copCount = 1;
     for (int i = 0; i < gridSize; i++) {
         for (int j = 0; j < gridSize; j++) {
-            grid[i][j].print();
+            if (grid[i][j].hasCop()) {
+                cout << " C" << copCount << " ";
+                copCount++;
+            }
+            else
+                grid[i][j].print();
         }
         cout << endl;
     }
 }
 
-void Grid::friendlyMove(char direction) {
+void Grid::RobberFriendlyMove(char direction) {
     if (direction == 'w') {
-        move(robber->x, robber->y, robber->x, robber->y - 1);
+
+
+        cout << "Robber moves north" << endl;
+        cout << robber->col << " " << robber->row << endl;
+        cout << robber->col << " " << robber -> row - 1 << endl;
+
+
+        move(robber->col, robber->row, robber->col, robber->row - 1);
     } else if (direction == 'd') {
-        move(robber->x, robber->y, robber->x + 1, robber->y);
+        move(robber->col, robber->row, robber->col + 1, robber->row);
     } else if (direction == 's') {
-        move(robber->x, robber->y, robber->x, robber->y + 1);
+        move(robber->col, robber->row, robber->col, robber->row + 1);
     } else if (direction == 'a') {
-        move(robber->x, robber->y, robber->x - 1, robber->y);
+        move(robber->col, robber->row, robber->col - 1, robber->row);
+    } else if (direction == 'e' ) {
+        move(robber->col, robber->row, robber->col, robber->row);
+    }
+    else {
+        cout << "Invalid direction" << endl;
     }
 }
 
-void Grid::move(int x, int y, int newX, int newY) {
-    if (checkMovement(x, y, newX, newY)) {
-        if (grid[x][y].hasCop()) {
-            grid[newX][newY].setCop();
-            grid[x][y].removeCop();
+void Grid::CopFriendlyMove(vector<char> directions) {
+    for (int i = 0; i < copNum; i++) {
+        if (directions[i] == 'w') {
+            move(cops[i].getX(), cops[i].getY(), cops[i].getX(), cops[i].getY() - 1);
+        } else if (directions[i] == 'd') {
+            move(cops[i].getX(), cops[i].getY(), cops[i].getX() + 1, cops[i].getY());
+        } else if (directions[i] == 's') {
+            move(cops[i].getX(), cops[i].getY(), cops[i].getX(), cops[i].getY() + 1);
+        } else if (directions[i] == 'a') {
+            move(cops[i].getX(), cops[i].getY(), cops[i].getX() - 1, cops[i].getY());
+        } else if (directions[i] == 'e' ) {
+        move(cops[i].getX(), cops[i].getY(), cops[i].getX(), cops[i].getY());
+        }
+        else {
+            cout << "Invalid direction" << endl;
+        }
+    }
+}
+
+void Grid::move(int col, int row, int newX, int newY) {
+    if (checkMovement(col, row, newX, newY)) {
+        if (grid[row][col].hasCop()) {
+            grid[newY][newX].setCop();
+            grid[row][col].removeCop();
             
             for (int i = 0; i < copNum; i++) {
-                if (&cops[i] == &grid[x][y]) {
-                    cops[i] = grid[newX][newY];
+                if (&cops[i] == &grid[row][col]) {
+                    cops[i] = grid[newY][newX];
                 }
             }
 
             //check if the cop wins
 
-        } else if (grid[x][y].hasRobber()) {
-            grid[newX][newY].setRobber();
-            grid[x][y].removeRobber();
+        } else if (grid[row][col].hasRobber()) {
+            grid[newY][newX].setRobber();
+            grid[row][col].removeRobber();
 
-            robber = &grid[newX][newY];
+            robber = &grid[newY][newX];
 
             if (moves % 5 == 4) 
                 if (robberWinCheck()) {
@@ -172,37 +210,43 @@ void Grid::move(int x, int y, int newX, int newY) {
     moves++;
 }
 
-bool Grid::checkMovement(int x, int y, int newX, int newY) {
+bool Grid::checkMovement(int col, int row, int newX, int newY) {
+
+    cout << col << " " << row << " | " << newX << " " << newY << endl;
+
     //check if the new position is within the grid
     if (newX < 0 || newX >= gridSize || newY < 0 || newY >= gridSize) {
+        cout << "Invalid move: out of bounds" << endl;
         return false;
     }
     //check if the movement is adjacent
-    if (abs(newX - x) > 1 || abs(newY - y) > 1) {
+    if (abs(newX - col) > 1 || abs(newY - row) > 1) {
+        cout << "Invalid move: not adjacent" << endl;
         return false;
     }
-    //check if the new position is empty
-    if (!grid[newX][newY].isEmpty()) {
-        return false;
-    }
+    // //check if the new position is empty
+    // if (!grid[newY][newX]) {
+    //     cout << "Invalid move: position is not empty" << endl; // change later
+    //     return false;
+    // }
 
     return true;
 }
 
 
 
-        // Calculate the best direction for the robber to move, 1 = north, 2 = east, 3 = south, 4 = west
+    // Calculate the best direction for the robber to move, 1 = north, 2 = east, 3 = south, 4 = west
 int Grid::huntersAlg() {
     // Call recursive function:
     
     // north
-    int north = calculateBestDirection(robber->x, robber->y, robber->x, robber->y - 1, 0); 
+    int north = calculateBestDirection(robber->col, robber->row, robber->col, robber->row - 1, 0); 
     // east
-    int east = calculateBestDirection(robber->x, robber->y, robber->x + 1, robber->y, 0);
+    int east = calculateBestDirection(robber->col, robber->row, robber->col + 1, robber->row, 0);
     // south
-    int south = calculateBestDirection(robber->x, robber->y, robber->x, robber->y + 1, 0);
+    int south = calculateBestDirection(robber->col, robber->row, robber->col, robber->row + 1, 0);
     // west
-    int west = calculateBestDirection(robber->x, robber->y, robber->x - 1, robber->y, 0);
+    int west = calculateBestDirection(robber->col, robber->row, robber->col - 1, robber->row, 0);
 
     // return the best direction. 
     if (north > east && north > south && north > west) {
@@ -217,9 +261,9 @@ int Grid::huntersAlg() {
     return 0;
 }
 
-int Grid::calculateBestDirection(int x, int y, int newX, int newY, int time) {
+int Grid::calculateBestDirection(int col, int row, int newX, int newY, int time) {
     //base case: if the robber is caught
-    if (grid[newX][newY].hasCop()) { // replace .hasCop with whatever implementation used later
+    if (grid[newY][newX].hasCop()) { // replace .hasCop with whatever implementation used later
         return time;
     }
 
