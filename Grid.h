@@ -14,15 +14,24 @@ class Grid {
         char simType; 
         int moves = 0;
         int maxMoves;
-        vector<int> pastMoves;
+        vector<list<Grid>> pastPos;
+
         
 
         Node** grid;
         Node* robber;
         Node* cops; // array of cops
+        int pastPosHash();
 
     public:
+        Grid(Grid* parent);
+
         Grid(int gridSize, int copNum, int robberSpeed, char simType, int maxMoves);
+
+        void insertGridPos();
+
+        Grid search();
+        
         void print();
 
         void move(int x, int y, int newX, int newY);
@@ -35,6 +44,7 @@ class Grid {
 
         int calculateBestDirection(int x, int y, int newX, int newY, int time);
 
+        bool robberWinCheck();
 };  
 
 #endif

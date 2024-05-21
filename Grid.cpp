@@ -2,6 +2,47 @@
 
 using namespace std;
 
+Grid::Grid(Grid* parent) {
+    this->gridSize = parent->gridSize;
+    this->copNum = parent->copNum;
+
+    // Create the grid
+
+    grid = new Node*[gridSize];
+    for (int i = 0; i < gridSize; i++) {
+        grid[i] = new Node[gridSize];
+    }
+
+    // Initialize the grid
+    for (int i = 0; i < gridSize; i++) {
+        for (int j = 0; j < gridSize; j++) {
+            grid[i][j] = Node(i, j);
+        }
+    }
+
+    cops = new Node[copNum];
+    // Place the cops
+    for (int i = 0; i < copNum; i++) {
+        int x, y;
+        x = parent->cops[i].getX();
+        y = parent->cops[i].getY();
+        grid[x][y].setCop();
+
+        for (int i = 0; i < copNum; i++) {
+            cops[i] = grid[x][y];
+        }
+    }
+
+
+    // Place the robber
+    int x, y;
+    x = parent->robber->getX();
+    y = parent->robber->getY();
+    grid[x][y].setRobber();
+
+    robber = &grid[x][y]; 
+}
+
 Grid::Grid(int gridSize, int copNum, int robberSpeed, char simType, int maxMoves) {
     this->gridSize = gridSize;
     this->copNum = copNum;
@@ -44,8 +85,31 @@ Grid::Grid(int gridSize, int copNum, int robberSpeed, char simType, int maxMoves
 
     robber = &grid[x][y]; 
 
+    pastPos = vector<list<Grid>>(gridSize * gridSize);
+
     cout << "Grid initialized" << endl;
 }
+
+int Grid::pastPosHash() {
+    int hash = 0;
+    hash = robber->x * gridSize + robber->y;
+    return hash % (gridSize * gridSize);
+}
+
+void Grid::insertGridPos() {
+    int hash = pastPosHash();
+
+    Grid tempGrid(*this);   
+    pastPos[hash].push_back(*this);
+}
+
+
+bool robberWinCheck() {
+    //hash search
+
+    //if current grid pos = past grid pos, return true;
+}
+
 
 void Grid::print() {
     for (int i = 0; i < gridSize; i++) {
@@ -94,6 +158,7 @@ bool Grid::checkMovement(int x, int y, int newX, int newY) {
 }
 
 
+
         // Calculate the best direction for the robber to move, 1 = north, 2 = east, 3 = south, 4 = west
 int Grid::huntersAlg() {
     // Call recursive function:
@@ -134,3 +199,4 @@ int Grid::calculateBestDirection(int x, int y, int newX, int newY, int time) {
     //optimization theory: run each iteration by timestep (to conserve cop ROC)
     //use pattern searching with last e steps to predict next step and find a robberWin
 }
+
