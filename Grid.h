@@ -48,11 +48,11 @@ class Grid {
         // Calculate the best direction for the robber to move, 1 = north, 2 = east, 3 = south, 4 = west
         int huntersAlg();
 
-        int calculateBestDirection(int row, int col, int newX, int newY, int time);
+        int calculateBestDirection(int newCol, int newRow, int time);
 
         bool robberWinCheck();
 
-        void growCopROC();
+        set<Node*> growCopROC(int timeStep);
 };  
 
 #endif

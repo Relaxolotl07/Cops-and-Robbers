@@ -5,6 +5,7 @@ using namespace std;
 Grid::Grid(Grid* parent) {
     this->gridSize = parent->gridSize;
     this->copNum = parent->copNum;
+    this->robberSpeed = parent->robberSpeed;
 
     // Create the grid
 
@@ -247,13 +248,13 @@ int Grid::huntersAlg() {
     // Call recursive function:
     
     // north
-    int north = calculateBestDirection(robber->col, robber->row, robber->col, robber->row - 1, 0); 
+    int north = calculateBestDirection(robber->col, robber->row - 1, 0); 
     // east
-    int east = calculateBestDirection(robber->col, robber->row, robber->col + 1, robber->row, 0);
+    int east = calculateBestDirection(robber->col + 1, robber->row, 0);
     // south
-    int south = calculateBestDirection(robber->col, robber->row, robber->col, robber->row + 1, 0);
+    int south = calculateBestDirection(robber->col, robber->row + 1, 0);
     // west
-    int west = calculateBestDirection(robber->col, robber->row, robber->col - 1, robber->row, 0);
+    int west = calculateBestDirection(robber->col - 1, robber->row, 0);
 
     // return the best direction. 
     if (north > east && north > south && north > west) {
@@ -268,18 +269,68 @@ int Grid::huntersAlg() {
     return 0;
 }
 
-int Grid::calculateBestDirection(int col, int row, int newX, int newY, int time) {
-    //base case: if the robber is caught
-    if (grid[newY][newX].hasCop()) { // replace .hasCop with whatever implementation used later
+
+// ** OPTIMIZE THE SHIT OUT OF THIS FUNCTION **
+int Grid::calculateBestDirection(int newCol, int newRow, int time) {
+
+    set<Node*> copROC = growCopROC(time/robberSpeed); // truncates to lowest whole number
+    
+    // check if the new position is within the cop ROC // ** CHECK FOR TIMING: if this should be calculated after being added or before
+    if (copROC.find(&grid[newRow][newCol]) != copROC.end()) {
         return time;
     }
 
-    //check if intersect with cop ROC (make function for separate gridstate using COP ROCs)
-    //code
+    time++;
+    int north, south, east, west = 0;
+    // check for out of bounds for movements (nesw)
+    if (newCol < 0 || newRow >= gridSize || newCol < 0 || newRow >= gridSize) {
+        //north
+        north = calculateBestDirection(newCol, newRow - 1, time);
+        //east
+        east = calculateBestDirection(newCol + 1, newRow, time);
+        //south
+        south = calculateBestDirection(newCol, newRow + 1, time);
+        //west
+        west = calculateBestDirection(newCol - 1, newRow, time);
+    }
 
 
-    return 0;
+    // sum the nsew directions
+
+    return north + east + south + west;
     //optimization theory: run each iteration by timestep (to conserve cop ROC)
     //use pattern searching with last e steps to predict next step and find a robberWin
 }
 
+// Grows the cop ROC. Not stored 
+set<Node*> Grid::growCopROC(int timeStep) {
+    set<Node*> copROC;
+    for (int i = 0; i < copNum; i++) {
+        copROC.insert(cops[i]);
+    }
+    
+    //create temp cop roc to add adjacent vector porinters to
+    // loop through the grid to find adjacent nodes to the cop ROC
+    //repeat for timeStep
+    for (int i = 0; i < timeStep; i++) {
+        set<Node*> tempCopROC;
+        for (auto& node : copROC) {
+            //check if the node is within the grid
+            if (node->col - 1 >= 0) {
+                tempCopROC.insert(&grid[node->row][node->col - 1]);
+            }
+            if (node->col + 1 < gridSize) {
+                tempCopROC.insert(&grid[node->row][node->col + 1]);
+            }
+            if (node->row - 1 >= 0) {
+                tempCopROC.insert(&grid[node->row - 1][node->col]);
+            }
+            if (node->row + 1 < gridSize) {
+                tempCopROC.insert(&grid[node->row + 1][node->col]);
+            }
+        }
+        copROC = tempCopROC;
+    }
+
+    return copROC;
+}
