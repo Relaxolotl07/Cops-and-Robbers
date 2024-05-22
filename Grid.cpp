@@ -193,7 +193,9 @@ void Grid::move(int col, int row, int newCol, int newRow) {
                     cops[i] = &grid[newRow][newCol];
                 }
             }
+            
 
+            // ** fix the cops being able to move to the same spot and get moved together (*cops array edit)
             grid[row][col].removeCop();
             grid[newRow][newCol].setCop();
             
