@@ -8,8 +8,8 @@ using namespace std;
 struct Node{
     bool isCop;
     bool isRobber;
-    int x;
-    int y;
+    int col;
+    int row;
 
     Node() {
         isCop = false;
@@ -17,8 +17,8 @@ struct Node{
     }
 
     Node(int x, int y) {
-        this->x = x;
-        this->y = y;
+        this->col = x;
+        this->row = y;
         isCop = false;
         isRobber = false;
     }
@@ -48,18 +48,18 @@ struct Node{
         return isCop && isRobber;
     }
     int getX() {
-        return x;
+        return col;
     }
     int getY() {
-        return y;
+        return row;
     }
     void print() {
         if (isCop) {
-            cout << " C ";
+            cout << "C";
         } else if (isRobber) {
-            cout << " R ";
+            cout << "R";
         } else {
-            cout << " 0 ";
+            cout << "0";
         }
     }
 };

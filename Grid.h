@@ -20,7 +20,7 @@ class Grid {
 
         Node** grid;
         Node* robber;
-        Node* cops; // array of cops
+        Node** cops; // array of cops
         int pastPosHash();
 
     public:

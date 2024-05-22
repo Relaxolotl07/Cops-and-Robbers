@@ -16,21 +16,19 @@ Grid::Grid(Grid* parent) {
     // Initialize the grid
     for (int i = 0; i < gridSize; i++) {
         for (int j = 0; j < gridSize; j++) {
-            grid[i][j] = Node(i, j);
+            grid[i][j] = Node(j, i);
         }
     }
 
-    cops = new Node[copNum];
+    cops = new Node*[copNum];
     // Place the cops
     for (int i = 0; i < copNum; i++) {
         int col, row;
-        col = parent->cops[i].getX();
-        row = parent->cops[i].getY();
+        col = parent->cops[i]->getX();
+        row = parent->cops[i]->getY();
         grid[col][row].setCop();
 
-        for (int i = 0; i < copNum; i++) {
-            cops[i] = grid[row][col];
-        }
+        cops[i] = &grid[row][col];
     }
 
 
@@ -59,28 +57,26 @@ Grid::Grid(int gridSize, int copNum, int robberSpeed, char simType, int maxMoves
     // Initialize the grid
     for (int i = 0; i < gridSize; i++) {
         for (int j = 0; j < gridSize; j++) {
-            grid[i][j] = Node(i, j);
+            grid[i][j] = Node(j, i);
         }
     }
 
-    cops = new Node[copNum];
+    cops = new Node*[copNum];
     // Place the cops
     for (int i = 0; i < copNum; i++) {
         int col, row;
-        cout << "Enter the coordinates of cop " << i + 1 << ": ";
+        cout << "Enter the coordinates of cop " << i + 1 << ": (row col, top left is 1, 1)";
         cin >> row >> col;
         grid[--row][--col].setCop();
 
-        for (int i = 0; i < copNum; i++) {
-            cops[i] = grid[row][col];
-        }
+        cops[i] = &grid[row][col];
     }
 
 
     // Place the robber
     int col, row;
-    cout << "Enter the coordinates of the robber: ";
-    cin >> col >> row;
+    cout << "Enter the coordinates of the robber: (row col)";
+    cin >> row >> col;
     cout << row << " " << col << endl;
     grid[--row][--col].setRobber();
     cout << col << " " << row << endl;
@@ -127,11 +123,17 @@ void Grid::print() {
     for (int i = 0; i < gridSize; i++) {
         for (int j = 0; j < gridSize; j++) {
             if (grid[i][j].hasCop()) {
-                cout << " C" << copCount << " ";
-                copCount++;
+                for (int k = 0; k < copNum; k++) {
+                    if (cops[k]->getX() == j && cops[k]->getY() == i) {
+                        cout << "C" << k + 1;
+                    }
+                }        
             }
-            else
+            else {
                 grid[i][j].print();
+                cout << " ";
+            }
+            cout << " ";
         }
         cout << endl;
     }
@@ -164,15 +166,15 @@ void Grid::RobberFriendlyMove(char direction) {
 void Grid::CopFriendlyMove(vector<char> directions) {
     for (int i = 0; i < copNum; i++) {
         if (directions[i] == 'w') {
-            move(cops[i].getX(), cops[i].getY(), cops[i].getX(), cops[i].getY() - 1);
+            move(cops[i]->getX(), cops[i]->getY(), cops[i]->getX(), cops[i]->getY() - 1);
         } else if (directions[i] == 'd') {
-            move(cops[i].getX(), cops[i].getY(), cops[i].getX() + 1, cops[i].getY());
+            move(cops[i]->getX(), cops[i]->getY(), cops[i]->getX() + 1, cops[i]->getY());
         } else if (directions[i] == 's') {
-            move(cops[i].getX(), cops[i].getY(), cops[i].getX(), cops[i].getY() + 1);
+            move(cops[i]->getX(), cops[i]->getY(), cops[i]->getX(), cops[i]->getY() + 1);
         } else if (directions[i] == 'a') {
-            move(cops[i].getX(), cops[i].getY(), cops[i].getX() - 1, cops[i].getY());
+            move(cops[i]->getX(), cops[i]->getY(), cops[i]->getX() - 1, cops[i]->getY());
         } else if (directions[i] == 'e' ) {
-        move(cops[i].getX(), cops[i].getY(), cops[i].getX(), cops[i].getY());
+        move(cops[i]->getX(), cops[i]->getY(), cops[i]->getX(), cops[i]->getY());
         }
         else {
             cout << "Invalid direction" << endl;
@@ -180,25 +182,29 @@ void Grid::CopFriendlyMove(vector<char> directions) {
     }
 }
 
-void Grid::move(int col, int row, int newX, int newY) {
-    if (checkMovement(col, row, newX, newY)) {
+void Grid::move(int col, int row, int newCol, int newRow) {
+    if (checkMovement(col, row, newCol, newRow)) {
         if (grid[row][col].hasCop()) {
-            grid[newY][newX].setCop();
-            grid[row][col].removeCop();
             
             for (int i = 0; i < copNum; i++) {
-                if (&cops[i] == &grid[row][col]) {
-                    cops[i] = grid[newY][newX];
+                if (cops[i] == &grid[row][col]) {
+                    cops[i] = &grid[newRow][newCol];
                 }
             }
-
+            grid[newRow][newCol].setCop();
+            grid[row][col].removeCop();
+            
             //check if the cop wins
+            if (grid[newRow][newCol].hasRobber()) {
+                cout << "Cop wins!" << endl;
+                exit(0);
+            }
 
         } else if (grid[row][col].hasRobber()) {
-            grid[newY][newX].setRobber();
+            grid[newRow][newCol].setRobber();
             grid[row][col].removeRobber();
 
-            robber = &grid[newY][newX];
+            robber = &grid[newRow][newCol];
 
             if (moves % 5 == 4) 
                 if (robberWinCheck()) {
@@ -232,7 +238,6 @@ bool Grid::checkMovement(int col, int row, int newX, int newY) {
 
     return true;
 }
-
 
 
     // Calculate the best direction for the robber to move, 1 = north, 2 = east, 3 = south, 4 = west

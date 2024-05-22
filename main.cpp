@@ -47,8 +47,9 @@ int main() {
                     {
                         //robber moves 2 times
                         for (int i = 0; i < robberSpeed; ++i) {
-                            cout << "What direction do you want the robber to move in?" << endl;
+                            cout << "What direction do you want the robber to move in? (wasd, e to skip)" << endl;
                             cin >> directional;
+                            grid.print();
                             grid.RobberFriendlyMove(directional);
                         }
 
@@ -58,7 +59,7 @@ int main() {
                         //Cop move
                         vector<char> copDirections;
                         for (int i = 0; i < copNum; ++i) {
-                            cout << "What direction do you want cop " << i + 1 << " to move?" << endl;
+                            cout << "What direction do you want cop " << i + 1 << " to move? (wasd, e to skip)" << endl;
                             cin >> directional;
                             copDirections.push_back(directional);
                         }
@@ -74,7 +75,7 @@ int main() {
                     break;
                 case 'r': 
                     //robber move
-                    cout << "What direction do you want the robber to move in?" << endl;
+                    cout << "What direction do you want the robber to move in? (wasd)" << endl;
                     cin >> directional;
                     grid.RobberFriendlyMove(directional);
                     // call cop movement function
@@ -86,7 +87,7 @@ int main() {
                     break;
                 case 'a':  
                     //call robber movement function
-                    cout << "What direction do you want the robber to move in?" << endl;
+                    cout << "What direction do you want the robber to move in? (wasd)" << endl;
                     cin >> directional;
                     grid.RobberFriendlyMove(directional);
                     //call cop movement function
