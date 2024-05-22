@@ -65,8 +65,10 @@ Grid::Grid(int gridSize, int copNum, int robberSpeed, char simType, int maxMoves
     // Place the cops
     for (int i = 0; i < copNum; i++) {
         int col, row;
-        cout << "Enter the coordinates of cop " << i + 1 << ": (row col, top left is 1, 1)";
+        cout << "Enter the coordinates of cop " << i + 1 << " (row col, top left is 1 1): ";
         cin >> row >> col;
+        cout << endl;
+
         grid[--row][--col].setCop();
 
         cops[i] = &grid[row][col];
@@ -75,16 +77,16 @@ Grid::Grid(int gridSize, int copNum, int robberSpeed, char simType, int maxMoves
 
     // Place the robber
     int col, row;
-    cout << "Enter the coordinates of the robber: (row col)";
+    cout << "Enter the coordinates of the robber (row col): ";
     cin >> row >> col;
-    cout << row << " " << col << endl;
+    // cout << row << " " << col << endl; (testing)
     grid[--row][--col].setRobber();
-    cout << col << " " << row << endl;
+    // cout << col << " " << row << endl; (testing)
     robber = &grid[row][col]; 
 
     pastPos = vector<list<Grid>>(gridSize * gridSize);
 
-    cout << "Grid initialized" << endl;
+    cout << "Grid initialized: " << endl;
 }
 
 int Grid::pastPosHash() {
@@ -142,11 +144,11 @@ void Grid::print() {
 void Grid::RobberFriendlyMove(char direction) {
     if (direction == 'w') {
 
-
+        /*
         cout << "Robber moves north" << endl;
         cout << robber->col << " " << robber->row << endl;
         cout << robber->col << " " << robber -> row - 1 << endl;
-
+        */
 
         move(robber->col, robber->row, robber->col, robber->row - 1);
     } else if (direction == 'd') {
@@ -220,7 +222,9 @@ void Grid::move(int col, int row, int newCol, int newRow) {
 
 bool Grid::checkMovement(int col, int row, int newX, int newY) {
 
-    cout << col << " " << row << " | " << newX << " " << newY << endl;
+    /*(testing purposes)
+    cout << col << " " << row << " | " << newX << " " << newY << endl;\
+    */
 
     //check if the new position is within the grid
     if (newX < 0 || newX >= gridSize || newY < 0 || newY >= gridSize) {

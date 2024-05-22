@@ -10,8 +10,7 @@ class Grid {
         int copNum;
         int robberSpeed;
         int gridSize;
-        // simType is either 't' for turn-based cop control or 'c' for continuous 
-        char simType; 
+        char simType; // simType is either 't' for turn-based cop control or 'c' for continuous 
         int moves = 0;
         int maxMoves;
         vector<list<Grid>> pastPos;
