@@ -210,8 +210,8 @@ bool Grid::CopFriendlyMove(vector<char> directions) {
 }
 
 bool Grid::move(int col, int row, int newCol, int newRow, bool isCop) {
+    
     if (checkMovement(col, row, newCol, newRow)) {
-        moves++;
         if (isCop) {
             
             for (int i = 0; i < copNum; i++) {
@@ -233,18 +233,21 @@ bool Grid::move(int col, int row, int newCol, int newRow, bool isCop) {
 
             return true;
         } else if (grid[row][col].hasRobber()) {
+
             grid[row][col].removeRobber();
             grid[newRow][newCol].setRobber();
             
 
             robber = &grid[newRow][newCol];
 
-            if (moves % 5 == 4) 
-                if (robberWinCheck()) {
+            if (moves % 3 == 2 &&  robberWinCheck()) {
                     cout << "Robber wins!" << endl;
                     exit(0);
-                }
-
+            } else {
+                insertGridPos();
+            }
+            moves++;
+            
             return true;
         }
     }
