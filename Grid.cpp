@@ -140,7 +140,7 @@ void Grid::print() {
     }
 }
 
-void Grid::RobberFriendlyMove(char direction) {
+bool Grid::RobberFriendlyMove(char direction) {
     if (direction == 'w') {
 
         /*
@@ -150,22 +150,49 @@ void Grid::RobberFriendlyMove(char direction) {
         cout << robber->col << " " << robber -> row - 1 << endl;
         */
 
-        move(robber->col, robber->row, robber->col, robber->row - 1);
+        return move(robber->col, robber->row, robber->col, robber->row - 1);
     } else if (direction == 'd') {
-        move(robber->col, robber->row, robber->col + 1, robber->row);
+        return move(robber->col, robber->row, robber->col + 1, robber->row);
     } else if (direction == 's') {
-        move(robber->col, robber->row, robber->col, robber->row + 1);
+        return move(robber->col, robber->row, robber->col, robber->row + 1);
     } else if (direction == 'a') {
-        move(robber->col, robber->row, robber->col - 1, robber->row);
+        return move(robber->col, robber->row, robber->col - 1, robber->row);
     } else if (direction == 'e' ) {
-        move(robber->col, robber->row, robber->col, robber->row);
+        return move(robber->col, robber->row, robber->col, robber->row);
     }
     else {
         cout << "Invalid direction" << endl;
+        return false;
     }
 }
 
-void Grid::CopFriendlyMove(vector<char> directions) {
+bool Grid::CopFriendlyMove(vector<char> directions) {
+    for (int i = 0; i < copNum; i++) {
+        if (directions[i] == 'w') {
+            if (!checkMovement(cops[i]->getX(), cops[i]->getY(), cops[i]->getX(), cops[i]->getY() - 1)) {
+                cout << "Cop " << i + 1 << " is out of bounds." << endl;
+                return false;
+            }
+        } else if (directions[i] == 'd') {
+            if (!checkMovement(cops[i]->getX(), cops[i]->getY(), cops[i]->getX() + 1, cops[i]->getY())) {
+                cout << "Cop " << i + 1 << " is out of bounds." << endl;
+                return false;
+            }
+        } else if (directions[i] == 's') {
+            if (!checkMovement(cops[i]->getX(), cops[i]->getY(), cops[i]->getX(), cops[i]->getY() + 1)) {
+                cout << "Cop " << i + 1 << " is out of bounds." << endl;
+                return false;
+            }
+        } else if (directions[i] == 'a') {
+            if (!checkMovement(cops[i]->getX(), cops[i]->getY(), cops[i]->getX() - 1, cops[i]->getY())) {
+                cout << "Cop " << i + 1 << " is out of bounds." << endl;
+                return false;
+            }
+        } else if (directions[i] != 'e' ) {
+            cout << "Invalid direction" << endl;
+            return false;
+        }
+    }
     for (int i = 0; i < copNum; i++) {
         if (directions[i] == 'w') {
             move(cops[i]->getX(), cops[i]->getY(), cops[i]->getX(), cops[i]->getY() - 1);
@@ -176,16 +203,15 @@ void Grid::CopFriendlyMove(vector<char> directions) {
         } else if (directions[i] == 'a') {
             move(cops[i]->getX(), cops[i]->getY(), cops[i]->getX() - 1, cops[i]->getY());
         } else if (directions[i] == 'e' ) {
-        move(cops[i]->getX(), cops[i]->getY(), cops[i]->getX(), cops[i]->getY());
-        }
-        else {
-            cout << "Invalid direction" << endl;
+            move(cops[i]->getX(), cops[i]->getY(), cops[i]->getX(), cops[i]->getY());
         }
     }
+    return true;
 }
 
-void Grid::move(int col, int row, int newCol, int newRow) {
+bool Grid::move(int col, int row, int newCol, int newRow) {
     if (checkMovement(col, row, newCol, newRow)) {
+        moves++;
         if (grid[row][col].hasCop()) {
             
             for (int i = 0; i < copNum; i++) {
@@ -205,6 +231,7 @@ void Grid::move(int col, int row, int newCol, int newRow) {
                 exit(0);
             }
 
+            return true;
         } else if (grid[row][col].hasRobber()) {
             grid[row][col].removeRobber();
             grid[newRow][newCol].setRobber();
@@ -217,9 +244,11 @@ void Grid::move(int col, int row, int newCol, int newRow) {
                     cout << "Robber wins!" << endl;
                     exit(0);
                 }
+
+            return true;
         }
     }
-    moves++;
+    return false;
 }
 
 bool Grid::checkMovement(int col, int row, int newX, int newY) {

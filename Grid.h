@@ -35,11 +35,11 @@ class Grid {
 
         int getMoves();
 
-        void RobberFriendlyMove(char direction);
+        bool RobberFriendlyMove(char direction);
 
-        void CopFriendlyMove(vector<char> directions);
+        bool CopFriendlyMove(vector<char> directions);
 
-        void move(int row, int col, int newX, int newY);
+        bool move(int row, int col, int newX, int newY);
 
         bool checkMovement(int row, int col, int newX, int newY);
 

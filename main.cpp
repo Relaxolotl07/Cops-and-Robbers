@@ -54,12 +54,14 @@ int main() {
                     while (var != 'q') {                   
                         //Cops move first
                         vector<char> copDirections;
-                        for (int i = 0; i < copNum; ++i) {
-                            cout << "What direction do you want cop " << i + 1 << " to move? (wasd, e to skip)" << endl;
-                            cin >> directional;
-                            copDirections.push_back(directional);
-                        }
-                        grid.CopFriendlyMove(copDirections);
+                        do {
+                            copDirections.clear();
+                            for (int i = 0; i < copNum; ++i) {
+                                cout << "What direction do you want cop " << i + 1 << " to move? (wasd, e to skip)" << endl;
+                                cin >> directional;
+                                copDirections.push_back(directional);
+                            }
+                        } while (!grid.CopFriendlyMove(copDirections));
 
                         //Print grid
                         grid.print();
@@ -70,7 +72,10 @@ int main() {
                             cout << "Enter robber move " << i + 1 << " (wasd, e to skip): " << endl;
                             cin >> directional;
                             cout << endl;
-                            grid.RobberFriendlyMove(directional);
+                            while (!grid.RobberFriendlyMove(directional)) {
+                                cout << "Invalid move. Please enter a valid move." << endl;
+                                cin >> directional;
+                            }
                             grid.print();
                             cout << endl;
                         }
