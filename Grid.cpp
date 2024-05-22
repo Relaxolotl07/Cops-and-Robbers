@@ -191,8 +191,9 @@ void Grid::move(int col, int row, int newCol, int newRow) {
                     cops[i] = &grid[newRow][newCol];
                 }
             }
-            grid[newRow][newCol].setCop();
             grid[row][col].removeCop();
+            grid[newRow][newCol].setCop();
+            
             
             //check if the cop wins
             if (grid[newRow][newCol].hasRobber()) {
@@ -201,8 +202,9 @@ void Grid::move(int col, int row, int newCol, int newRow) {
             }
 
         } else if (grid[row][col].hasRobber()) {
-            grid[newRow][newCol].setRobber();
             grid[row][col].removeRobber();
+            grid[newRow][newCol].setRobber();
+            
 
             robber = &grid[newRow][newCol];
 
