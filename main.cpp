@@ -61,11 +61,12 @@ int main() {
 
                         //Robber then moves 2 times
                         for (int i = 0; i < robberSpeed; ++i) {
-                            cout << "What direction do you want the robber to move in? (wasd, e to skip)" << endl;
+                            cout << "Enter robber move " << i + 1 << " (wasd, e to skip): " << endl;
                             cin >> directional;
-                            grid.print();
                             cout << endl;
                             grid.RobberFriendlyMove(directional);
+                            grid.print();
+                            cout << endl;
                         }
 
                         cout << "Press 'q' to exit, press any other key to continue." << endl;

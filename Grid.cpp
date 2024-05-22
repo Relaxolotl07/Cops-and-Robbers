@@ -48,13 +48,13 @@ Grid::Grid(int gridSize, int copNum, int robberSpeed, char simType, int maxMoves
     this->simType = simType;
     this->maxMoves = maxMoves;
 
-    // Create the grid
+    //Create the grid
     grid = new Node*[gridSize];
     for (int i = 0; i < gridSize; i++) {
         grid[i] = new Node[gridSize];
     }
 
-    // Initialize the grid
+    //Initialize the grid
     for (int i = 0; i < gridSize; i++) {
         for (int j = 0; j < gridSize; j++) {
             grid[i][j] = Node(j, i);
@@ -62,7 +62,8 @@ Grid::Grid(int gridSize, int copNum, int robberSpeed, char simType, int maxMoves
     }
 
     cops = new Node*[copNum];
-    // Place the cops
+
+    //Place the cops
     for (int i = 0; i < copNum; i++) {
         int col, row;
         cout << "Enter the coordinates of cop " << i + 1 << " (row col, top left is 1 1): ";
@@ -73,7 +74,6 @@ Grid::Grid(int gridSize, int copNum, int robberSpeed, char simType, int maxMoves
 
         cops[i] = &grid[row][col];
     }
-
 
     // Place the robber
     int col, row;
