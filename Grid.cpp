@@ -68,7 +68,6 @@ Grid::Grid(int gridSize, int copNum, int robberSpeed, char simType, int maxMoves
         int col, row;
         cout << "Enter the coordinates of cop " << i + 1 << " (row col, top left is 1 1): ";
         cin >> row >> col;
-        cout << endl;
 
         grid[--row][--col].setCop();
 
@@ -119,7 +118,6 @@ int Grid::getMoves() {
     return moves;
 }
 
-
 void Grid::print() {
     int copCount = 1;
     for (int i = 0; i < gridSize; i++) {
@@ -145,6 +143,7 @@ void Grid::RobberFriendlyMove(char direction) {
     if (direction == 'w') {
 
         /*
+        (testing)
         cout << "Robber moves north" << endl;
         cout << robber->col << " " << robber->row << endl;
         cout << robber->col << " " << robber -> row - 1 << endl;
@@ -193,9 +192,9 @@ void Grid::move(int col, int row, int newCol, int newRow) {
                     cops[i] = &grid[newRow][newCol];
                 }
             }
+
             grid[row][col].removeCop();
             grid[newRow][newCol].setCop();
-            
             
             //check if the cop wins
             if (grid[newRow][newCol].hasRobber()) {
@@ -232,11 +231,14 @@ bool Grid::checkMovement(int col, int row, int newX, int newY) {
         return false;
     }
     //check if the movement is adjacent
+    /*
     if (abs(newX - col) > 1 || abs(newY - row) > 1) {
         cout << "Invalid move: not adjacent" << endl;
         return false;
     }
-    // //check if the new position is empty
+    */
+
+    // check if the new position is empty
     // if (!grid[newY][newX]) {
     //     cout << "Invalid move: position is not empty" << endl; // change later
     //     return false;

@@ -28,6 +28,7 @@ int main() {
 
     Grid grid(gridSize, copNum, robberSpeed, simType, maxMoves);
     
+    cout << endl;
     grid.print();
     cout << endl;
 
@@ -41,7 +42,10 @@ int main() {
             cout << "r. Robber Control Movement" << endl;
             cout << "a. Automatic Movement" << endl;
             cout << "q. Quit" << endl;
+            cout << endl;
             cin >> selection;
+            cout << endl;
+
             switch(selection){
                 case 'm': 
 
@@ -77,7 +81,7 @@ int main() {
 
                 case 'r': 
                     //robber move
-                    cout << "What direction do you want the robber to move in? (wasd)" << endl;
+                    cout << "Enter robber move (wasd, e to skip): " << endl;
                     cin >> directional;
                     grid.RobberFriendlyMove(directional);
                     // call cop movement function
@@ -106,7 +110,6 @@ int main() {
                 default:
                     cout << "Invalid selection" << endl;
                     break;
-
             }
 
         }
