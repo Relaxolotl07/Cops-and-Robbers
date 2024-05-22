@@ -282,7 +282,27 @@ int Grid::huntersAlg() {
 int Grid::calculateBestDirection(int newCol, int newRow, int time) {
 
     set<Node*> copROC = growCopROC(time/robberSpeed); // truncates to lowest whole number
-    
+
+    //**TEST
+    // Print grid
+    for (int i = 0; i < gridSize; i++) {
+        for (int j = 0; j < gridSize; j++) {
+            if (grid[i][j].hasCop()) {
+                cout << "C ";
+            } else if (grid[i][j].hasRobber()) {
+                cout << "R ";
+            } else if (copROC.find(&grid[i][j]) != copROC.end()){
+                cout << "& ";
+            } else if (i == newRow && j == newCol) {
+                cout << time << " ";
+            } else {
+                cout << ". ";
+            }
+        }
+        cout << endl;
+    }
+
+    // ** TEST
     // check if the new position is within the cop ROC // ** CHECK FOR TIMING: if this should be calculated after being added or before
     if (copROC.find(&grid[newRow][newCol]) != copROC.end()) {
         return time;
