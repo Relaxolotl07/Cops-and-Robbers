@@ -39,7 +39,7 @@ class Grid {
 
         bool CopFriendlyMove(vector<char> directions);
 
-        bool move(int row, int col, int newX, int newY);
+        bool move(int row, int col, int newX, int newY, bool isCop);
 
         bool checkMovement(int row, int col, int newX, int newY);
 

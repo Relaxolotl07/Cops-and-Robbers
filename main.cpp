@@ -51,7 +51,7 @@ int main() {
             switch(selection){
                 case 'm': 
 
-                    while (var != 'q') {                   
+                    while (directional != 'q') {                   
                         //Cops move first
                         vector<char> copDirections;
                         do {
@@ -68,7 +68,7 @@ int main() {
                         cout << endl;
 
                         //Robber then moves 2 times
-                        for (int i = 0; i < robberSpeed; ++i) {
+                        for (int i = 0; i < robberSpeed - 1; ++i) {
                             cout << "Enter robber move " << i + 1 << " (wasd, e to skip): " << endl;
                             cin >> directional;
                             cout << endl;
@@ -79,9 +79,15 @@ int main() {
                             grid.print();
                             cout << endl;
                         }
-
-                        cout << "Press 'q' to exit, press any other key to continue." << endl;
-                        cin >> var;
+                        cout << "Enter robber last move " << " (wasd, e to skip, q to quit): " << endl;
+                        cin >> directional;
+                        cout << endl;
+                        while (!grid.RobberFriendlyMove(directional)) {
+                            cout << "Invalid move. Please enter a valid move." << endl;
+                            cin >> directional;
+                        }
+                        grid.print();
+                        cout << endl;
                     }
 
                     break;

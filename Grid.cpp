@@ -150,15 +150,15 @@ bool Grid::RobberFriendlyMove(char direction) {
         cout << robber->col << " " << robber -> row - 1 << endl;
         */
 
-        return move(robber->col, robber->row, robber->col, robber->row - 1);
+        return move(robber->col, robber->row, robber->col, robber->row - 1, false);
     } else if (direction == 'd') {
-        return move(robber->col, robber->row, robber->col + 1, robber->row);
+        return move(robber->col, robber->row, robber->col + 1, robber->row, false);
     } else if (direction == 's') {
-        return move(robber->col, robber->row, robber->col, robber->row + 1);
+        return move(robber->col, robber->row, robber->col, robber->row + 1, false);
     } else if (direction == 'a') {
-        return move(robber->col, robber->row, robber->col - 1, robber->row);
+        return move(robber->col, robber->row, robber->col - 1, robber->row, false);
     } else if (direction == 'e' ) {
-        return move(robber->col, robber->row, robber->col, robber->row);
+        return move(robber->col, robber->row, robber->col, robber->row, false);
     }
     else {
         cout << "Invalid direction" << endl;
@@ -195,24 +195,24 @@ bool Grid::CopFriendlyMove(vector<char> directions) {
     }
     for (int i = 0; i < copNum; i++) {
         if (directions[i] == 'w') {
-            move(cops[i]->getX(), cops[i]->getY(), cops[i]->getX(), cops[i]->getY() - 1);
+            move(cops[i]->getX(), cops[i]->getY(), cops[i]->getX(), cops[i]->getY() - 1, true);
         } else if (directions[i] == 'd') {
-            move(cops[i]->getX(), cops[i]->getY(), cops[i]->getX() + 1, cops[i]->getY());
+            move(cops[i]->getX(), cops[i]->getY(), cops[i]->getX() + 1, cops[i]->getY(), true);
         } else if (directions[i] == 's') {
-            move(cops[i]->getX(), cops[i]->getY(), cops[i]->getX(), cops[i]->getY() + 1);
+            move(cops[i]->getX(), cops[i]->getY(), cops[i]->getX(), cops[i]->getY() + 1, true);
         } else if (directions[i] == 'a') {
-            move(cops[i]->getX(), cops[i]->getY(), cops[i]->getX() - 1, cops[i]->getY());
+            move(cops[i]->getX(), cops[i]->getY(), cops[i]->getX() - 1, cops[i]->getY(), true);
         } else if (directions[i] == 'e' ) {
-            move(cops[i]->getX(), cops[i]->getY(), cops[i]->getX(), cops[i]->getY());
+            move(cops[i]->getX(), cops[i]->getY(), cops[i]->getX(), cops[i]->getY(), true);
         }
     }
     return true;
 }
 
-bool Grid::move(int col, int row, int newCol, int newRow) {
+bool Grid::move(int col, int row, int newCol, int newRow, bool isCop) {
     if (checkMovement(col, row, newCol, newRow)) {
         moves++;
-        if (grid[row][col].hasCop()) {
+        if (isCop) {
             
             for (int i = 0; i < copNum; i++) {
                 if (cops[i] == &grid[row][col]) {
