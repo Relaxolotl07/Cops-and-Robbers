@@ -1,6 +1,7 @@
 #ifndef GRIDH
 #define GRIDH
 
+#include <algorithm>
 #include "Node.cpp"
 
 using namespace std;
