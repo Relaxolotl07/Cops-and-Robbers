@@ -36,10 +36,12 @@ int main() {
     char selection;
     char directional;
     char var = ' ';
+    int direction;
     do {
         if (simType == 't'){
             cout << "m. Manual Movement" << endl;
-            cout << "r. Robber Control Movement" << endl;
+            cout << "r. Control the robber" << endl;
+            cout << "c. Control the cops" << endl;
             cout << "a. Automatic Movement" << endl;
             cout << "q. Quit" << endl;
             cout << endl;
@@ -49,32 +51,43 @@ int main() {
             switch(selection){
                 case 'm': 
 
-                    while (var != 'q') {                   
+                    while (directional != 'q') {                   
                         //Cops move first
                         vector<char> copDirections;
-                        for (int i = 0; i < copNum; ++i) {
-                            cout << "What direction do you want cop " << i + 1 << " to move? (wasd, e to skip)" << endl;
-                            cin >> directional;
-                            copDirections.push_back(directional);
-                        }
-                        grid.CopFriendlyMove(copDirections);
+                        do {
+                            copDirections.clear();
+                            for (int i = 0; i < copNum; ++i) {
+                                cout << "What direction do you want cop " << i + 1 << " to move? (wasd, e to skip)" << endl;
+                                cin >> directional;
+                                copDirections.push_back(directional);
+                            }
+                        } while (!grid.CopFriendlyMove(copDirections));
 
                         //Print grid
                         grid.print();
                         cout << endl;
 
                         //Robber then moves 2 times
-                        for (int i = 0; i < robberSpeed; ++i) {
+                        for (int i = 0; i < robberSpeed - 1; ++i) {
                             cout << "Enter robber move " << i + 1 << " (wasd, e to skip): " << endl;
                             cin >> directional;
                             cout << endl;
-                            grid.RobberFriendlyMove(directional);
+                            while (!grid.RobberFriendlyMove(directional)) {
+                                cout << "Invalid move. Please enter a valid move." << endl;
+                                cin >> directional;
+                            }
                             grid.print();
                             cout << endl;
                         }
-
-                        cout << "Press 'q' to exit, press any other key to continue." << endl;
-                        cin >> var;
+                        cout << "Enter robber last move " << " (wasd, e to skip, q to quit): " << endl;
+                        cin >> directional;
+                        cout << endl;
+                        while (!grid.RobberFriendlyMove(directional)) {
+                            cout << "Invalid move. Please enter a valid move." << endl;
+                            cin >> directional;
+                        }
+                        grid.print();
+                        cout << endl;
                     }
 
                     break;
@@ -90,7 +103,35 @@ int main() {
                     grid.print();
 
                     break;
+                case 'c':
+                    //Cops move first
+                    while (var != 'q') {
+                        vector<char> copDirections;
+                        for (int i = 0; i < copNum; ++i) {
+                            cout << "What direction do you want cop " << i + 1 << " to move? (wasd, e to skip)" << endl;
+                            cin >> directional;
+                            copDirections.push_back(directional);
+                        }
+                        grid.CopFriendlyMove(copDirections);
 
+                        //Print grid
+                        grid.print();
+                        cout << endl;
+
+                         //Robber then moves 2 times
+                        for (int i = 0; i < robberSpeed; ++i) {
+                            direction = grid.huntersAlg();
+                            cout << "The robber will move " << (direction == 1 ? "north" : direction == 2 ? "east" : direction == 3 ? "south" : "west");
+                            directional = (direction == 1 ? 'w' : direction == 2 ? 'd' : direction == 3 ? 's' : 'a');
+                            grid.RobberFriendlyMove(directional);
+                            grid.print();
+                            cout << endl;
+                        }
+                        
+                        cout << "Press 'q' to exit, press any other key to continue." << endl;
+                        cin >> var;
+                    }
+                    break;
                 case 'a':  
                     //call robber movement function
                     cout << "What direction do you want the robber to move in? (wasd)" << endl;
