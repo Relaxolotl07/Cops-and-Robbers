@@ -220,8 +220,6 @@ bool Grid::move(int col, int row, int newCol, int newRow, bool isCop) {
                 }
             }
             
-
-            // ** fix the cops being able to move to the same spot and get moved together (*cops array edit)
             grid[row][col].removeCop();
             grid[newRow][newCol].setCop();
             
@@ -333,6 +331,7 @@ int Grid::calculateBestDirection(int newCol, int newRow, int time) {
         }
         cout << endl;
     }
+    cout << endl;
 
     // ** TEST
     // check if the new position is within the cop ROC // ** CHECK FOR TIMING: if this should be calculated after being added or before
