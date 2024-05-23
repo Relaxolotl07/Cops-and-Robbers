@@ -405,12 +405,14 @@ int Grid::calculateBestDirection(int newCol, int newRow, int time) {
     west = checkMovement(newCol, newRow, newCol - 1, newRow) ? calculateBestDirection(newCol - 1, newRow, time) : 0;
 
 
-    // sum the nsew directions
+    // sum the new directions
 
     return north + east + south + west;
-
+    // ** optimization theories:
     //optimization theory: run each iteration by timestep (to conserve cop ROC)
     //use pattern searching with last e steps to predict next step and find a robberWin
+    // alpha-beta pruning
+    // limit the search depth or max time
 
 }
 
@@ -446,4 +448,58 @@ set<Node*> Grid::growCopROC(int timeStep) {
     }
 
     return copROC;
+}
+
+//GREEDY ALGORITHM WITH VECTORS
+char Grid::greedyDirectionAlg() {
+    
+    // call the greedy vectorization algorithm
+    vector<double> direction = greedyVectorizationAlg();
+
+    // convert the vector to a direction
+    // if the col value is greater than the row value, move east or west
+    if (abs(direction[1]) > abs(direction[0])) {
+        if (direction[1] > 0) {
+            return 'd';
+        } else {
+            return 'a';
+        }
+    } else {
+        if (direction[0] > 0) {
+            return 's';
+        } else {
+            return 'w';
+        }
+    }
+    
+    return 'e';
+}
+
+vector<double> Grid::greedyVectorizationAlg() {
+    vector<double> direction (2, 0.0);  // **(row, col)
+
+    // initialize the robber's position
+    int robberRow = robber->row;
+    int robberCol = robber->col;
+
+    // loop through cops
+    for (int i = 0; i < copNum; i++) {
+        
+        //calculate the vector lol
+        int vecRow = robberRow - cops[i]->row;
+        int vecCol = robberCol - cops[i]->col;
+        cout << "vecRow is " << vecRow << endl;
+        cout << "vecCol is " << vecCol << endl;
+
+        // sum the vectors and make it equal to direction (make normal vectors) (each entry divided by vector magnitude)
+        //square of magnitude in denominator makes vectors inversely weighted to distance (closer is more influence)
+        direction[0] += double(vecRow) / (vecCol * vecCol + vecRow * vecRow);
+        direction[1] += double(vecCol) / (vecCol * vecCol + vecRow * vecRow);
+        //testing this retarded direction system
+        cout << "direction[0] is " << direction[0] << endl;
+        cout << "direction[1] is " << direction[1] << endl;
+    }
+
+    // direction = sum of stuff:
+    return direction;
 }

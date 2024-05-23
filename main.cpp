@@ -104,6 +104,13 @@ int main() {
 
                     break;
                 case 'c':
+
+                    cout << "Enter the robber evasion strategy: " << endl;
+                    cout << "1. Greedy" << endl;
+                    cout << "2. Tree Brute Force" << endl;
+
+                    int strategy;
+                    cin >> strategy;
                     //Cops move first
                     while (var != 'q') {
                         vector<char> copDirections;
@@ -117,15 +124,28 @@ int main() {
                         //Print grid
                         grid.print();
                         cout << endl;
-
-                         //Robber then moves 2 times
-                        for (int i = 0; i < robberSpeed; ++i) {
-                            direction = grid.huntersAlg();
-                            cout << "The robber will move " << (direction == 1 ? "north" : direction == 2 ? "east" : direction == 3 ? "south" : "west") << endl;
-                            directional = (direction == 1 ? 'w' : direction == 2 ? 'd' : direction == 3 ? 's' : 'a');
-                            grid.RobberFriendlyMove(directional);
-                            grid.print();
-                            cout << endl;
+                        if (strategy == 2) {
+                            //Robber then moves 2 times
+                            for (int i = 0; i < robberSpeed; ++i) {
+                                direction = grid.huntersAlg();
+                                cout << "The robber will move " << (direction == 1 ? "north" : direction == 2 ? "east" : direction == 3 ? "south" : "west") << endl;
+                                directional = (direction == 1 ? 'w' : direction == 2 ? 'd' : direction == 3 ? 's' : 'a');
+                                grid.RobberFriendlyMove(directional);
+                                grid.print();
+                                cout << endl;
+                            }
+                        } else if (strategy == 1) {
+                            //Robber then moves 2 times
+                            for (int i = 0; i < robberSpeed; ++i) {
+                                directional = grid.greedyDirectionAlg();
+                                cout << "The robber will move " << (directional == 'w' ? "north" : directional == 'd' ? "east" : directional == 's' ? "south" : "west") << endl;
+                                grid.RobberFriendlyMove(directional);
+                                grid.print();
+                                cout << endl;
+                            }
+                        } else {
+                            cout << "Invalid strategy" << endl;
+                            break;
                         }
                         
                         cout << "Press 'q' to exit, press any other key to continue." << endl;

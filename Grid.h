@@ -55,6 +55,10 @@ class Grid {
         //bool robberWinCheck();
 
         set<Node*> growCopROC(int timeStep);
+
+        char greedyDirectionAlg(); // converts the greedy algorithm vector to a direction using sin/cos.
+
+        vector<double> greedyVectorizationAlg(); // uses the greedy algorithm to find the best direction to move in.
 };  
 
 #endif
