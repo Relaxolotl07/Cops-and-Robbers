@@ -366,8 +366,10 @@ int Grid::calculateBestDirection(int newCol, int newRow, int time) {
     // sum the nsew directions
 
     return north + east + south + west;
+    // ** optimizations theories:
     //optimization theory: run each iteration by timestep (to conserve cop ROC)
     //use pattern searching with last e steps to predict next step and find a robberWin
+    // set a max timestep so that large grids don't take forever to calculate
 }
 
 // Grows the cop ROC. Not stored 

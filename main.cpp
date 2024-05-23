@@ -121,7 +121,7 @@ int main() {
                          //Robber then moves 2 times
                         for (int i = 0; i < robberSpeed; ++i) {
                             direction = grid.huntersAlg();
-                            cout << "The robber will move " << (direction == 1 ? "north" : direction == 2 ? "east" : direction == 3 ? "south" : "west");
+                            cout << "The robber will move " << (direction == 1 ? "north" : direction == 2 ? "east" : direction == 3 ? "south" : "west") << endl;
                             directional = (direction == 1 ? 'w' : direction == 2 ? 'd' : direction == 3 ? 's' : 'a');
                             grid.RobberFriendlyMove(directional);
                             grid.print();
