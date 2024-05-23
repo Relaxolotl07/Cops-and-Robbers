@@ -2,10 +2,10 @@
 
 using namespace std;
 
-Grid::Grid(Grid* parent) {
-    this->gridSize = parent->gridSize;
-    this->copNum = parent->copNum;
-    this->robberSpeed = parent->robberSpeed;
+Grid::Grid(const Grid &parent) {
+    this->gridSize = parent.gridSize;
+    this->copNum = parent.copNum;
+    this->robberSpeed = parent.robberSpeed;
 
     // Create the grid
 
@@ -25,9 +25,9 @@ Grid::Grid(Grid* parent) {
     // Place the cops
     for (int i = 0; i < copNum; i++) {
         int col, row;
-        col = parent->cops[i]->getX();
-        row = parent->cops[i]->getY();
-        grid[col][row].setCop();
+        col = parent.cops[i]->getX();
+        row = parent.cops[i]->getY();
+        grid[row][col].setCop();
 
         cops[i] = &grid[row][col];
     }
@@ -35,8 +35,8 @@ Grid::Grid(Grid* parent) {
 
     // Place the robber
     int col, row;
-    col = parent->robber->getX();
-    row = parent->robber->getY();
+    col = parent.robber->getX();
+    row = parent.robber->getY();
     grid[row][col].setRobber();
 
     robber = &grid[row][col]; 
@@ -93,33 +93,28 @@ int Grid::pastPosHash() {
     int hash = 0;
     // Hash the robber's position
     hash = robber->col * gridSize + robber->row;
-
-    // Hash each cop's position and combine it into the hash
-    for (int i = 0; i < copNum; i++) {
-        hash = (hash * 31 + (cops[i]->col * gridSize + cops[i]->row)) % (gridSize * gridSize);
-    }
     return hash % (gridSize * gridSize);
 }
 
 bool Grid::isSimilarPosition() {
     int hash = pastPosHash();
-
+    bool allCopsMatch = true;
     // Check if there's a list in the vector for the given hash
     if (hash < pastPos.size() && !pastPos[hash].empty()) {
         for (const auto& pastGrid : pastPos[hash]) {
             // Compare the positions of the robber and all cops
-            if (robber->col == pastGrid.robber->col && robber->row == pastGrid.robber->row) {
-                bool allCopsMatch = true;
-                for (size_t i = 0; i < copNum; ++i) {
-                    if (cops[i]->col != pastGrid.cops[i]->col || cops[i]->row != pastGrid.cops[i]->row) {
-                        allCopsMatch = false;
-                        break;
-                    }
-                }
-                if (allCopsMatch) {
-                    return true;
+            
+
+            for (int i = 0; i < copNum; ++i) {
+                if (cops[i]->col != pastGrid.cops[i]->col || cops[i]->row != pastGrid.cops[i]->row) {
+                    allCopsMatch = false;
+                    break;
                 }
             }
+            if (allCopsMatch) {
+                return true;
+            }
+            
         }
     }
     return false;
@@ -132,10 +127,18 @@ void Grid::insertGridPos() {
     }
 
     int hash = pastPosHash();
-    if (hash >= pastPos.size()) {
-        pastPos.resize(hash + 1);  // Ensure the vector is large enough
+    
+    Grid tempGrid(*this);
+    pastPos[hash].push_back(tempGrid);  // Insert the current grid state into the pastPos vector
+}
+
+void Grid::printPastGrids() {
+    for (auto& gridList : pastPos) {
+        for (auto& grid : gridList) {
+            grid.print();
+            cout << endl;
+        }
     }
-    pastPos[hash].push_back(*this);  // Insert the current grid state into the pastPos vector
 }
 
 /*
@@ -155,6 +158,26 @@ bool Grid::robberWinCheck() {
 
 int Grid::getMoves() {
     return moves;
+}
+
+int Grid::getCopNum() {
+    return copNum;
+}
+
+int Grid::getRobberSpeed() {
+    return robberSpeed;
+}
+
+int Grid::getGridSize() {
+    return gridSize;
+}
+
+char Grid::getSimType() {
+    return simType;
+}
+
+int Grid::getMaxMoves() {
+    return maxMoves;
 }
 
 void Grid::print() {
@@ -362,7 +385,7 @@ int Grid::huntersAlg() {
 // ** OPTIMIZE THE SHIT OUT OF THIS FUNCTION **
 int Grid::calculateBestDirection(int newCol, int newRow, int time) {
 
-    set<Node*> copROC = growCopROC((time/robberSpeed)+1); // truncates to lowest whole number
+    set<Node*> copROC = growCopROC((time/robberSpeed)); // truncates to lowest whole number
     cout << "Time: " << time << " for " << newRow << ", " << newCol << endl;
 
     //**TEST
@@ -393,7 +416,7 @@ int Grid::calculateBestDirection(int newCol, int newRow, int time) {
 
     time++;
     int north, south, east, west = 0;
-    // check for out of bounds for movements (nesw)
+    // check for out of bounds for movements (new)
 
     //north
     north = checkMovement(newCol, newRow, newCol, newRow-1) ? calculateBestDirection(newCol, newRow - 1, time) : 0;
@@ -423,7 +446,7 @@ set<Node*> Grid::growCopROC(int timeStep) {
         copROC.insert(cops[i]);
     }
     
-    //create temp cop roc to add adjacent vector porinters to
+    //create temp cop roc to add adjacent vector pointers to
     // loop through the grid to find adjacent nodes to the cop ROC
     //repeat for timeStep
     for (int i = 0; i < timeStep; i++) {
@@ -471,7 +494,6 @@ char Grid::greedyDirectionAlg() {
             return 'w';
         }
     }
-    
     return 'e';
 }
 
@@ -495,11 +517,28 @@ vector<double> Grid::greedyVectorizationAlg() {
         //square of magnitude in denominator makes vectors inversely weighted to distance (closer is more influence)
         direction[0] += double(vecRow) / (vecCol * vecCol + vecRow * vecRow);
         direction[1] += double(vecCol) / (vecCol * vecCol + vecRow * vecRow);
+
         //testing this retarded direction system
         cout << "direction[0] is " << direction[0] << endl;
         cout << "direction[1] is " << direction[1] << endl;
     }
 
+    // grid bounds logic (robber dislikes boundaries because he will be trapped)
+    direction[0] += (1 / (robberRow) - 1 / (gridSize - robberRow));
+    direction[1] += (1 / (robberCol) - 1 / (gridSize - robberCol));
+    
     // direction = sum of stuff:
     return direction;
+}
+
+char Grid::abelEvasionAlg() {
+    
+    //initialize robber's position
+    int robberRow = robber->row;
+    int robberCol = robber->col;
+
+    //iterate through 13 possible positions
+    
+    //test scores
+    //move to position with best score
 }

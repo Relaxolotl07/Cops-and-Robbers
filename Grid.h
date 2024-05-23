@@ -24,7 +24,7 @@ class Grid {
         int pastPosHash();
 
     public:
-        Grid(Grid* parent);
+        Grid(const Grid & parent);
 
         Grid(int gridSize, int copNum, int robberSpeed, char simType, int maxMoves);
 
@@ -32,11 +32,24 @@ class Grid {
 
         bool isSimilarPosition();
 
+        void printPastGrids();
+
+        //what is this function bro
         Grid search();
         
         void print();
 
         int getMoves();
+
+        int getCopNum();
+
+        int getRobberSpeed();
+
+        int getGridSize();
+
+        char getSimType();
+
+        int getMaxMoves();
 
         bool RobberFriendlyMove(char direction);
 
@@ -48,7 +61,7 @@ class Grid {
 
 
         // Calculate the best direction for the robber to move, 1 = north, 2 = east, 3 = south, 4 = west
-        int huntersAlg();
+        int huntersAlg();   
 
         int calculateBestDirection(int newCol, int newRow, int time);
 
@@ -56,9 +69,11 @@ class Grid {
 
         set<Node*> growCopROC(int timeStep);
 
-        char greedyDirectionAlg(); // converts the greedy algorithm vector to a direction using sin/cos.
+        char greedyDirectionAlg(); // converts the greedy algorithm vector to a direction.
 
         vector<double> greedyVectorizationAlg(); // uses the greedy algorithm to find the best direction to move in.
+
+        char abelEvasionAlg();
 };  
 
 #endif

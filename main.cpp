@@ -7,8 +7,7 @@
 #include "Grid.cpp"
 using namespace std;
 
-
-int main() {
+Grid newGrid() {
     int gridSize, copNum, robberSpeed, maxMoves;
     char simType;
 
@@ -27,6 +26,16 @@ int main() {
     cin >> maxMoves;
 
     Grid grid(gridSize, copNum, robberSpeed, simType, maxMoves);
+    return grid;
+}
+
+int main() {
+    Grid grid = newGrid();
+    char simType = grid.getSimType();
+    int copNum = grid.getCopNum();
+    int robberSpeed = grid.getRobberSpeed();
+    int maxMoves = grid.getMaxMoves();
+
     
     cout << endl;
     grid.print();
@@ -43,6 +52,8 @@ int main() {
             cout << "r. Control the robber" << endl;
             cout << "c. Control the cops" << endl;
             cout << "a. Automatic Movement" << endl;
+            cout << "n. New Grid" << endl;
+            cout << "p. Print Past Grids" << endl;
             cout << "q. Quit" << endl;
             cout << endl;
             cin >> selection;
@@ -112,6 +123,8 @@ int main() {
                     int strategy;
                     cin >> strategy;
                     //Cops move first
+
+                    grid.print();
                     while (var != 'q') {
                         vector<char> copDirections;
                         for (int i = 0; i < copNum; ++i) {
@@ -144,7 +157,7 @@ int main() {
                                 cout << endl;
                             }
                         } else {
-                            cout << "Invalid strategy" << endl;
+                            cout << "Invalid strategy. " << endl;
                             break;
                         }
                         
@@ -163,7 +176,16 @@ int main() {
                     grid.print();
                     
                     break;
-
+                case 'n':
+                    grid = newGrid();
+                    simType = grid.getSimType();
+                    copNum = grid.getCopNum();
+                    robberSpeed = grid.getRobberSpeed();
+                    maxMoves = grid.getMaxMoves();
+                    break;
+                case 'p':
+                    grid.printPastGrids();
+                    break;
                 case 'q':
                     tempFlag = false;
                     break;
@@ -172,7 +194,6 @@ int main() {
                     cout << "Invalid selection" << endl;
                     break;
             }
-
         }
 
         else if (simType == 'c') {
