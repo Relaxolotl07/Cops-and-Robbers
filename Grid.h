@@ -30,6 +30,8 @@ class Grid {
 
         void insertGridPos();
 
+        bool isSimilarPosition();
+
         Grid search();
         
         void print();
@@ -50,7 +52,7 @@ class Grid {
 
         int calculateBestDirection(int newCol, int newRow, int time);
 
-        bool robberWinCheck();
+        //bool robberWinCheck();
 
         set<Node*> growCopROC(int timeStep);
 };  
