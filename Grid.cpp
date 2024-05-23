@@ -93,7 +93,7 @@ int Grid::pastPosHash() {
     int hash = 0;
     // Hash the robber's position
     hash = robber->col * gridSize + robber->row;
-    
+
     // Hash each cop's position and combine it into the hash
     for (int i = 0; i < copNum; i++) {
         hash = (hash * 31 + (cops[i]->col * gridSize + cops[i]->row)) % (gridSize * gridSize);
@@ -103,7 +103,7 @@ int Grid::pastPosHash() {
 
 bool Grid::isSimilarPosition() {
     int hash = pastPosHash();
-    
+
     // Check if there's a list in the vector for the given hash
     if (hash < pastPos.size() && !pastPos[hash].empty()) {
         for (const auto& pastGrid : pastPos[hash]) {
@@ -125,7 +125,6 @@ bool Grid::isSimilarPosition() {
     return false;
 }
 
-
 void Grid::insertGridPos() {
     if (isSimilarPosition()) {
         cout << "Robber wins!" << endl;
@@ -144,7 +143,6 @@ void Grid::insertGridPos() {
 bool Grid::robberWinCheck() {
     //hash search
     int hash = pastPosHash();
-
     for (auto& grid : pastPos[hash]) {
         if (grid.robber->col == robber->col && grid.robber->row == robber->row) {
             for (int i = 0; i < copNum; i++)
@@ -153,7 +151,6 @@ bool Grid::robberWinCheck() {
     }
     return false;
 }
-
 */
 
 int Grid::getMoves() {
@@ -201,10 +198,11 @@ bool Grid::RobberFriendlyMove(char direction) {
     } else if (direction == 'e' ) {
         return move(robber->col, robber->row, robber->col, robber->row, false);
     }
-    else {
+    else if (direction != 'q') {
         cout << "Invalid direction" << endl;
         return false;
     }
+    return true;
 }
 
 bool Grid::CopFriendlyMove(vector<char> directions) {
@@ -229,10 +227,11 @@ bool Grid::CopFriendlyMove(vector<char> directions) {
                 cout << "Cop " << i + 1 << " is out of bounds." << endl;
                 return false;
             }
-        } else if (directions[i] != 'e' ) {
+        } else if (directions[i] != 'e') {
             cout << "Invalid direction" << endl;
             return false;
         }
+        
     }
     for (int i = 0; i < copNum; i++) {
         if (directions[i] == 'w') {
@@ -251,8 +250,8 @@ bool Grid::CopFriendlyMove(vector<char> directions) {
 }
 
 bool Grid::move(int col, int row, int newCol, int newRow, bool isCop) {
+    
     if (checkMovement(col, row, newCol, newRow)) {
-        moves++;
         if (isCop) {
             
             for (int i = 0; i < copNum; i++) {
@@ -261,8 +260,6 @@ bool Grid::move(int col, int row, int newCol, int newRow, bool isCop) {
                 }
             }
             
-
-            // ** fix the cops being able to move to the same spot and get moved together (*cops array edit)
             grid[row][col].removeCop();
             grid[newRow][newCol].setCop();
             
@@ -273,13 +270,14 @@ bool Grid::move(int col, int row, int newCol, int newRow, bool isCop) {
             }
 
             return true;
-
         } else if (grid[row][col].hasRobber()) {
+
             grid[row][col].removeRobber();
             grid[newRow][newCol].setRobber();
             
 
             robber = &grid[newRow][newCol];
+
             /*
             if (moves % 5 == 4) {
                 if (robberWinCheck()) {
@@ -290,7 +288,8 @@ bool Grid::move(int col, int row, int newCol, int newRow, bool isCop) {
             */
 
             insertGridPos();
-
+            moves++;
+            
             return true;
         }
     }
@@ -329,22 +328,29 @@ bool Grid::checkMovement(int col, int row, int newX, int newY) {
     // Calculate the best direction for the robber to move, 1 = north, 2 = east, 3 = south, 4 = west
 int Grid::huntersAlg() {
     // Call recursive function:
-    
+    int north, east, south, west = 0;
     // north
-    int north = calculateBestDirection(robber->col, robber->row - 1, 0); 
+    north = checkMovement(robber->col, robber->row, robber->col, robber->row -1) ? calculateBestDirection(robber->col, robber->row - 1, 0) : 0; 
+    cout << "North: " << north << endl;
     // east
-    int east = calculateBestDirection(robber->col + 1, robber->row, 0);
+    east = checkMovement(robber->col, robber->row, robber->col + 1, robber->row) ? calculateBestDirection(robber->col + 1, robber->row, 0) : 0;
+    cout << "East: " << east << endl;
     // south
-    int south = calculateBestDirection(robber->col, robber->row + 1, 0);
+    south = checkMovement(robber->col, robber->row, robber->col, robber->row + 1) ? calculateBestDirection(robber->col, robber->row + 1, 0) : 0;
+    cout << "South: " << south << endl;
     // west
-    int west = calculateBestDirection(robber->col - 1, robber->row, 0);
+    west = checkMovement(robber->col, robber->row, robber->col - 1, robber->row) ? calculateBestDirection(robber->col - 1, robber->row, 0) : 0;
+    cout << "West: " << west << endl;
+
+    
+    int largest = max(north, max(east, max(south, west)));
 
     // return the best direction. 
-    if (north > east && north > south && north > west) {
+    if (north == largest) {
         return 1;
-    } else if (east > north && east > south && east > west) {
+    } else if (east == largest) {
         return 2;
-    } else if (south > north && south > east && south > west) {
+    } else if (south == largest) {
         return 3;
     } else {
         return 4;
@@ -356,7 +362,8 @@ int Grid::huntersAlg() {
 // ** OPTIMIZE THE SHIT OUT OF THIS FUNCTION **
 int Grid::calculateBestDirection(int newCol, int newRow, int time) {
 
-    set<Node*> copROC = growCopROC(time/robberSpeed); // truncates to lowest whole number
+    set<Node*> copROC = growCopROC((time/robberSpeed)+1); // truncates to lowest whole number
+    cout << "Time: " << time << " for " << newRow << ", " << newCol << endl;
 
     //**TEST
     // Print grid
@@ -376,35 +383,35 @@ int Grid::calculateBestDirection(int newCol, int newRow, int time) {
         }
         cout << endl;
     }
+    cout << endl;
 
     // ** TEST
     // check if the new position is within the cop ROC // ** CHECK FOR TIMING: if this should be calculated after being added or before
-    if (copROC.find(&grid[newRow][newCol]) != copROC.end()) {
+    if (copROC.find(&grid[newRow][newCol]) != copROC.end()){
         return time;
     }
 
     time++;
     int north, south, east, west = 0;
     // check for out of bounds for movements (nesw)
-    if (newCol < 0 || newRow >= gridSize || newCol < 0 || newRow >= gridSize) {
-        //north
-        north = calculateBestDirection(newCol, newRow - 1, time);
-        //east
-        east = calculateBestDirection(newCol + 1, newRow, time);
-        //south
-        south = calculateBestDirection(newCol, newRow + 1, time);
-        //west
-        west = calculateBestDirection(newCol - 1, newRow, time);
-    }
+
+    //north
+    north = checkMovement(newCol, newRow, newCol, newRow-1) ? calculateBestDirection(newCol, newRow - 1, time) : 0;
+    //east
+    east = checkMovement(newCol, newRow, newCol + 1, newRow) ? calculateBestDirection(newCol + 1, newRow, time) : 0;
+    //south
+    south = checkMovement(newCol, newRow, newCol, newRow + 1) ? calculateBestDirection(newCol, newRow + 1, time) : 0;
+    //west
+    west = checkMovement(newCol, newRow, newCol - 1, newRow) ? calculateBestDirection(newCol - 1, newRow, time) : 0;
 
 
     // sum the nsew directions
 
     return north + east + south + west;
-    // ** optimizations theories:
+
     //optimization theory: run each iteration by timestep (to conserve cop ROC)
     //use pattern searching with last e steps to predict next step and find a robberWin
-    // set a max timestep so that large grids don't take forever to calculate
+
 }
 
 // Grows the cop ROC. Not stored 
@@ -434,7 +441,8 @@ set<Node*> Grid::growCopROC(int timeStep) {
                 tempCopROC.insert(&grid[node->row + 1][node->col]);
             }
         }
-        copROC = tempCopROC;
+        // copROC = tempCopROC
+        set_union(copROC.begin(), copROC.end(), tempCopROC.begin(), tempCopROC.end(), inserter(copROC, copROC.begin()));
     }
 
     return copROC;
