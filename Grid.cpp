@@ -531,14 +531,99 @@ vector<double> Grid::greedyVectorizationAlg() {
     return direction;
 }
 
-char Grid::abelEvasionAlg() {
-    
-    //initialize robber's position
-    int robberRow = robber->row;
-    int robberCol = robber->col;
+//ABEL DISTANCE EVASION ALGORITHM
+vector<pair<int, int>> Grid::getPossibleMoves(int row, int col) {
+        vector<pair<int, int>> moves;
 
-    //iterate through 13 possible positions
-    
-    //test scores
-    //move to position with best score
+        //13 possible positions
+        moves.push_back({row, col}); //ee
+        if (row - 1 >= 0) 
+            moves.push_back({row - 1, col}); //ew
+        if (row + 1 < gridSize) 
+            moves.push_back({row + 1, col}); //es
+        if (col - 1 >= 0) 
+            moves.push_back({row, col - 1}); //ea
+        if (col + 1 < gridSize) 
+            moves.push_back({row, col + 1}); //ed
+        if (row - 2 >= 0)
+            moves.push_back({row - 2, col}); //ww
+        if (row + 2 < gridSize)
+            moves.push_back({row + 2, col}); //ss
+        if (col - 2 >= 0)
+            moves.push_back({row, col - 2}); //aa
+        if (col + 2 < gridSize)
+            moves.push_back({row, col + 2}); //dd
+        if (row - 1 >= 0 && col - 1 >= 0)
+            moves.push_back({row - 1, col - 1}); //aw
+        if (row - 1 >= 0 && col + 1 < gridSize)
+            moves.push_back({row - 1, col + 1}); //dw
+        if (row + 1 < gridSize && col - 1 >= 0)
+            moves.push_back({row + 1, col - 1}); //sa
+        if (row + 1 < gridSize && col + 1 < gridSize)
+            moves.push_back({row + 1, col + 1}); //sd
+
+        return moves;
+    }
+
+double Grid::evaluatePosition(int row, int col) {
+    double score = 0.0;
+
+    for (int i = 0; i < copNum; i++) {
+        double dist = sqrt(pow(row - cops[i]->row, 2) + pow(col - cops[i]->col, 2));
+        score += dist;
+    }
+
+    //add boundary consideration?
+
+    return score;
+}
+
+pair<char, char> Grid::abelEvasionMoves() { 
+    int row = robber->row;
+    int col = robber->col;
+
+    pair<int, int> bestPos = {row, col};
+    double bestScore = numeric_limits<double>::lowest(); //unsure
+
+    vector<pair<int, int>> positions = getPossibleMoves(row, col);
+    for (const auto& position : positions) {
+        double score = evaluatePosition(position.first, position.second);
+        if (score > bestScore) {
+            bestScore = score;
+            bestPos = position;
+        }
+    }
+
+    if (bestPos.first == row && bestPos.second == col) {
+        return {'e', 'e'};
+    } else if (bestPos.first == row - 1 && bestPos.second == col) {
+        return {'e', 'w'};
+    } else if (bestPos.first == row + 1 && bestPos.second == col) {
+        return {'e', 's'};
+    } else if (bestPos.first == row && bestPos.second == col - 1) {
+        return {'e', 'a'};
+    } else if (bestPos.first == row && bestPos.second == col + 1) {
+        return {'e', 'd'};
+    } else if (bestPos.first == row && bestPos.second == col - 1) {
+        return {'e', 'a'};
+    } else if (bestPos.first == row - 2 && bestPos.second == col) {
+        return {'w', 'w'};
+    } else if (bestPos.first == row + 2 && bestPos.second == col) {
+        return {'s', 's'};
+    } else if (bestPos.first == row && bestPos.second == col - 2) {
+        return {'a', 'a'};
+    } else if (bestPos.first == row && bestPos.second == col + 2) {
+        return {'d', 'd'};
+    } else if (bestPos.first == row - 1 && bestPos.second == col - 1) {
+        return {'a', 'w'};
+    } else if (bestPos.first == row - 1 && bestPos.second == col + 1) {
+        return {'d', 'w'};
+    } else if (bestPos.first == row + 1 && bestPos.second == col - 1) {
+        return {'s', 'a'};
+    } else if (bestPos.first == row + 1 && bestPos.second == col + 1) {
+        return {'s', 'd'};
+    } else {
+        return {'e', 'e'}; //MAKES ROBBER STAY STILL if some shit doesn't work
+    }
+    //trash brute force here
 }

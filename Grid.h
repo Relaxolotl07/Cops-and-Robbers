@@ -73,7 +73,14 @@ class Grid {
 
         vector<double> greedyVectorizationAlg(); // uses the greedy algorithm to find the best direction to move in.
 
-        char abelEvasionAlg();
+
+        //abel evasion alg
+
+        vector<pair<int, int>> getPossibleMoves(int row, int col);
+
+        double evaluatePosition(int row, int col);
+
+        pair<char, char> abelEvasionMoves();
 };  
 
 #endif
