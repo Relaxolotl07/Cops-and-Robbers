@@ -81,6 +81,18 @@ class Grid {
         double evaluatePosition(int row, int col);
 
         pair<char, char> abelEvasionMoves();
+
+        int findRobberQuadrant();
+
+        void reorderCops(); // for a given robber position
+
+        vector<pair<int, char>> findBezierCopMoves();
+
+        char bezierCopMove(int copNumber);
+
+        pair<double, double> calculateCopBezier(int copNumber);
+
+        int factorial(int n) {return (n == 1 || n == 0) ? 1 : factorial(n - 1) * n;};
 };  
 
 #endif

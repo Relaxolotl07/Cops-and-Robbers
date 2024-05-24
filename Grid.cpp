@@ -643,3 +643,168 @@ pair<char, char> Grid::abelEvasionMoves() {
     }
     //trash brute force here
 }
+
+int Grid::findRobberQuadrant() {
+    if (robber->col >= gridSize/2.0 && robber->row <= gridSize/2.0) //*includes y = 0 and origin
+        return 1;
+    else if (robber->col <= gridSize/2.0 && robber->row <= gridSize/2.0)  //** includes y = 0 in second quadrant
+        return 2;
+    else if (robber->col <= gridSize/2.0 && robber->row >= gridSize/2.0) //** includes x = 0 in third quadrant
+        return 3;
+    else
+        return 4;
+}
+
+void Grid::reorderCops() {
+    int quadrant = findRobberQuadrant();
+    
+    int count = 0;
+
+   //Reorders from counterclockwise position (assuming radius is at the corner of the grid)
+    switch (quadrant) {
+        case 1: // * loops left to right then up to down
+            for (int i = 0; i < gridSize; i++) {
+                for (int j = 0; j < gridSize; j++) {
+                    if (grid[i][j].hasCop()) {
+                        cops[count] = &grid[i][j];
+                        count++;
+                    }
+                }
+            }
+            break;
+        case 2: // * loops left to right then down to up
+            for (int i = gridSize - 1; i >= 0; i--) {
+                for (int j = 0; j < gridSize; j++) {
+                    if (grid[i][j].hasCop()) {
+                        cops[count] = &grid[i][j];
+                        count++;
+                    }
+                }
+            }
+            break;
+        case 3: // * loops right to left then down to up
+            for (int i = gridSize - 1; i >= 0; i--) {
+                for (int j = gridSize - 1; j >= 0; j--) {
+                    if (grid[i][j].hasCop()) {
+                        cops[count] = &grid[i][j];
+                        count++;
+                    }
+                }
+            }
+            break; 
+        case 4: // * loops right to left then up to down
+            for (int i = 0; i < gridSize; i++) {
+                for (int j = gridSize - 1; j >= 0; j--) {
+                    if (grid[i][j].hasCop()) {
+                        cops[count] = &grid[i][j];
+                        count++;
+                    }
+                }
+            }
+            break;
+        default:
+            cout << "quadrant invalid lmfao" << endl;
+            break;
+    }
+}
+
+vector<pair<int, char>> Grid::findBezierCopMoves() {
+    vector<pair<int, char>> moves; // (copNumber, move) pair, start with (0, ' ')
+    reorderCops();
+    for (int i = 0; i < copNum; i++) {
+        char move = bezierCopMove(i);
+        moves.push_back({i, move});
+    }
+    return moves;
+}
+
+char Grid::bezierCopMove(int copNumber) {
+    // ** vectorize and find closest move to point
+    pair<int, int> bezierPoint = calculateCopBezier(copNumber); // uses row, col (y, x)
+    
+    // move the cop to its bezier point
+    const int row = cops[copNumber]->row;
+    const int col = cops[copNumber]->col;
+
+    double yVector = bezierPoint.first - row;
+    double xVector = bezierPoint.second - col;
+
+    // if the cop is already at the bezier point, return 'e'
+    if (abs(yVector) <= 1 && abs(xVector) <= 1) {
+        return 'e';
+    }
+
+    // if the cop is not at the bezier point, find the best direction to move
+    if (abs(yVector) > abs(xVector)) {
+        if (yVector > 0) {
+            return 's';
+        } else {
+            return 'w';
+        }
+    } else {
+        if (xVector > 0) {
+            return 'd';
+        } else {
+            return 'a';
+        }
+    }
+
+    return 'e';
+}
+
+pair<double, double> Grid::calculateCopBezier(int copNumber) {
+    
+    int y0, x0, yn, xn = 0;
+    // find first 2 bezier points (closest wall to robber)
+    switch (findRobberQuadrant()) {
+        case 1: 
+            y0 = 0;
+            x0 = robber->col;
+            yn = robber->row;
+            xn = gridSize - 1;
+            break;
+        case 2:
+            y0 = robber->row;
+            x0 = 0;
+            yn = 0;
+            xn = robber->col;
+            break;
+        case 3:
+            y0 = gridSize - 1;
+            x0 = robber->col;
+            yn = robber->row;
+            xn = 0;
+            break;
+        case 4:
+            y0 = robber->row;
+            x0 = gridSize - 1;
+            yn = gridSize - 1;
+            xn = robber->col;
+            break;
+    }
+    
+    int t = 1.0 / (copNum + 1) * (copNumber + 1);
+
+    double by = 0;
+    double bx = 0;
+    const int n = copNum + 2;
+
+    for (int i = 0; i <= n; i++) {
+        if (i == 0) { 
+            bx += (factorial(n) / double(factorial(i) * factorial(n - i))) * pow(1 - t, n - i) * pow(t, i) * x0;
+            by += (factorial(n) / double(factorial(i) * factorial(n - i))) * pow(1 - t, n - i) * pow(t, i) * y0;
+        }
+        else if (i == n) {
+            bx += (factorial(n) / double(factorial(i) * factorial(n - i))) * pow(1 - t, n - i) * pow(t, i) * xn;
+            by += (factorial(n) / double(factorial(i) * factorial(n - i))) * pow(1 - t, n - i) * pow(t, i) * yn;
+        }
+        else {
+        by += (factorial(n) / double(factorial(i) * factorial(n - i))) * pow(1 - t, n - i) * pow(t, i) * cops[i]->row;
+        bx += (factorial(n) / double(factorial(i) * factorial(n - i))) * pow(1 - t, n - i) * pow(t, i) * cops[i]->col;
+        }
+    }
+
+
+    // find the border points
+    return {by, bx};
+}
