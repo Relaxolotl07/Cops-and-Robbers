@@ -2,6 +2,37 @@
 
 using namespace std;
 
+
+// ███████████╣╣╣╣╣╣╣╣███████████
+// █████████╣╣╣╣╣╣╣╣╣╣╣╣╣████████
+// ███████╣╣╣╣╣╣╣╣╣╣╣╣╣╣╣╣███████
+// ██████╣╣╣╣╣╣╣╣╣╣╣╣╣╣╣╣╣╣██████
+// █████╣╣╣╣╣╣╣╣╣╣╣╣╣╣╣╣╣╣╣╣█████
+// ████╣╣██╣╣██╣╣╣╣╣╣██╣╣██╣╣████
+// ███╣╣████████╣╣╣╣████████╣╣███
+// ██╣╣╣████████╣╣╣╣████████╣╣╣██
+// ██╣╣╣████████╣╣╣╣████████╣╣╣██
+// ██╣╣╣╣██████╣╣╣╣╣╣██████╣╣╣╣██
+// █╣╣╣╣╣╣████╣╣╣╣╣╣╣╣████╣╣╣╣╣╣█
+// █╣╣╣╣╣╣╣██╣╣╣╣╣╣╣╣╣╣██╣╣╣╣╣╣╣█
+// █╣╣╣╣╣╣╣╣╣╣╣╣╣╣╣╣╣╣╣╣╣╣╣╣╣╣╣╣█
+// █╣╣╣╣╣╣╣╣╣╣╣╣╣╣╣╣╣╣╣╣╣╣╣╣╣╣╣╣█
+// █╣╣╣╣╣╣╣╣╣╣╣╣╣╣╣╣╣╣╣╣╣╣╣╣╣╣╣╣█
+// █╣╣╣╣╣╣╣╣╣╣╣╣╣╣╣╣╣╣╣╣╣╣╣╣╣╣╣╣█
+// █╣╣╣╣████████████████████╣╣╣╣█
+// █╣╣╣╣█╣╣╣╣╣╣╣╣╣╣╣╣╣╣╣╣╣╣█╣╣╣╣█
+// █╣╣╣╣█╣╣╣╣╣╣╣╣╣╣╣╣╣╣╣╣╣╣█╣╣╣╣█
+// ██╣╣╣██╣╣╣╣╣╣╣╣╣╣╣╣╣╣╣╣██╣╣╣██
+// ██╣╣╣╣██╣╣╣╣╣╣╣╣╣╣╣╣╣╣██╣╣╣╣██
+// ███╣╣╣╣█╣╣╣╣╣╣╣╣╣╣╣╣╣╣█╣╣╣╣███
+// ████╣╣╣╣█╣╣╣╣╣╣╣╣╣╣╣╣█╣╣╣╣████
+// ████╣╣╣╣╣██╣╣╣╣╣╣╣╣██╣╣╣╣╣████
+// █████╣╣╣╣╣╣██╣╣╣╣██╣╣╣╣╣╣█████
+// ███████╣╣╣╣╣╣████╣╣╣╣╣╣███████
+// ████████╣╣╣╣╣╣╣╣╣╣╣╣╣╣████████
+// ███████████╣╣╣╣╣╣╣╣███████████
+
+
 Grid::Grid(const Grid &parent) {
     this->gridSize = parent.gridSize;
     this->copNum = parent.copNum;
@@ -230,8 +261,9 @@ bool Grid::RobberFriendlyMove(char direction) {
 
 bool Grid::CopFriendlyMove(list<char> directions) {
     list<char>::iterator iter;
+    int i = 0;
     char letter;
-    for (iter = directions.begin(); iter!= directions.end(); iter) {
+    for (iter = directions.begin(); iter!= directions.end(); ++iter) {
         letter = *iter;
         if (letter == 'w') {
             if (!checkMovement(cops[i]->getX(), cops[i]->getY(), cops[i]->getX(), cops[i]->getY() - 1)) {
@@ -257,20 +289,23 @@ bool Grid::CopFriendlyMove(list<char> directions) {
             cout << "Invalid direction" << endl;
             return false;
         }
-        
+        i ++;
     }
-    for (int i = 0; i < copNum; i++) {
-        if (directions[i] == 'w') {
+    i = 0;
+    for (iter = directions.begin(); iter!= directions.end(); ++iter) {
+        letter = *iter;
+        if (letter == 'w') {
             move(cops[i]->getX(), cops[i]->getY(), cops[i]->getX(), cops[i]->getY() - 1, true);
-        } else if (directions[i] == 'd') {
+        } else if (letter == 'd') {
             move(cops[i]->getX(), cops[i]->getY(), cops[i]->getX() + 1, cops[i]->getY(), true);
-        } else if (directions[i] == 's') {
+        } else if (letter == 's') {
             move(cops[i]->getX(), cops[i]->getY(), cops[i]->getX(), cops[i]->getY() + 1, true);
-        } else if (directions[i] == 'a') {
+        } else if (letter == 'a') {
             move(cops[i]->getX(), cops[i]->getY(), cops[i]->getX() - 1, cops[i]->getY(), true);
-        } else if (directions[i] == 'e' ) {
+        } else if (letter == 'e' ) {
             move(cops[i]->getX(), cops[i]->getY(), cops[i]->getX(), cops[i]->getY(), true);
         }
+        i++;
     }
     return true;
 }
@@ -749,7 +784,7 @@ list<char> Grid::findBezierCopMoves() {
 
 char Grid::bezierCopMove(int copNumber) {
     // ** vectorize and find closest move to point
-    pair<int, int> bezierPoint = calculateCopBezier(copNumber); // uses row, col (y, x)
+    pair<double, double> bezierPoint = calculateCopBezier(copNumber); // uses row, col (y, x)
     cout << "Bezier point is (" << bezierPoint.first << ", " << bezierPoint.second << ")" << endl;
     
     // move the cop to its bezier point
@@ -816,25 +851,36 @@ pair<double, double> Grid::calculateCopBezier(int copNumber) {
             break;
     }
     
-    int t = 1.0 / (copNum + 1) * (copNumber + 1);
+    double t = 1.0 / (copNum + 1) * (copNumber + 1);
 
     double by = 0;
     double bx = 0;
     const int n = copNum + 2;
+    cout << "t is " << t << endl;
+    cout << "n is " << n << endl;
+    cout << "y0 is " << y0 << endl;
+    cout << "x0 is " << x0 << endl;
+    cout << "yn is " << yn << endl;
+    cout << "xn is " << xn << endl;
 
-    for (int i = 0; i <= n; i++) {
+
+    for (int i = 0; i < n; i++) {
         if (i == 0) { 
             bx += (factorial(n) / double(factorial(i) * factorial(n - i))) * pow(1 - t, n - i) * pow(t, i) * x0;
             by += (factorial(n) / double(factorial(i) * factorial(n - i))) * pow(1 - t, n - i) * pow(t, i) * y0;
         }
-        else if (i == n) {
+        else if (i == n - 1) {
             bx += (factorial(n) / double(factorial(i) * factorial(n - i))) * pow(1 - t, n - i) * pow(t, i) * xn;
             by += (factorial(n) / double(factorial(i) * factorial(n - i))) * pow(1 - t, n - i) * pow(t, i) * yn;
         }
         else {
-        by += (factorial(n) / double(factorial(i) * factorial(n - i))) * pow(1 - t, n - i) * pow(t, i) * cops[i]->row;
-        bx += (factorial(n) / double(factorial(i) * factorial(n - i))) * pow(1 - t, n - i) * pow(t, i) * cops[i]->col;
+            by += (factorial(n) / double(factorial(i) * factorial(n - i))) * pow(1 - t, n - i) * pow(t, i) * cops[i-1]->row;
+            bx += (factorial(n) / double(factorial(i) * factorial(n - i))) * pow(1 - t, n - i) * pow(t, i) * cops[i-1]->col;
         }
+        cout << "for i: " << i << endl;
+        cout << "by is " << by << endl;
+        cout << "bx is " << bx << endl;
+        cout << endl;
     }
 
 

@@ -83,12 +83,55 @@ int main() {
 
             // robber moves (for robberspeed)
             for (int i = 0; i < robberSpeed; ++i) {
-                cout << "Enter robber move " << i + 1 << " (wasd, e to skip): " << endl;
+                cout << "Enter robber move " << i + 1 << " (wasd, e to skip, f to automate moves): " << endl;
+
+                // if user wants to automate robber moves
                 cin >> directional;
                 cout << endl;
-                while (!grid.RobberFriendlyMove(directional)) {
-                    cout << "Invalid move. Please enter a valid move." << endl;
-                    cin >> directional;
+                if(directional == 'f'){
+                    int strategy;
+                    cout << "Enter the robber evasion strategy: " << endl;
+                    cout << "1. Greedy" << endl;
+                    cout << "2. Tree Brute Force" << endl;
+                    cout << "3. Distance Evasion" << endl;
+                    cin >> strategy;
+
+                    if(strategy == 1){
+                        //Robber then moves 2 times
+                        for (int i = 0; i < robberSpeed; ++i) {
+                            directional = grid.greedyDirectionAlg();
+                            cout << "The robber will move " << (directional == 'w' ? "north" : directional == 'd' ? "east" : directional == 's' ? "south" : "west") << endl;
+                            grid.RobberFriendlyMove(directional);
+                            grid.print();
+                            cout << endl;
+                        }
+                    }else if(strategy == 2){
+                        //robber then moves 2 times
+                        for (int i = 0; i < robberSpeed; ++i) {
+                            direction = grid.huntersAlg();
+                            cout << "The robber will move " << (direction == 1 ? "north" : direction == 2 ? "east" : direction == 3 ? "south" : "west") << endl;
+                            directional = (direction == 1 ? 'w' : direction == 2 ? 'd' : direction == 3 ? 's' : 'a');
+                            grid.RobberFriendlyMove(directional);
+                            cout << endl;
+                            grid.print();
+                            cout << endl;
+                        }
+                    }else{
+                        
+                        //Robber first move
+                        directional = grid.abelEvasionMoves().first;
+                        cout << "The robber will move " << (directional == 'w' ? "north" : directional == 'd' ? "east" : directional == 's' ? "south" : directional == 'a' ? "west" : "none") << endl;
+                        grid.RobberFriendlyMove(directional);
+                        //Robber second move
+                        directional = grid.abelEvasionMoves().second;
+                        cout << "The robber will move " << (directional == 'w' ? "north" : directional == 'd' ? "east" : directional == 's' ? "south" : directional == 'a' ? "west" : "none") << endl;
+                        grid.RobberFriendlyMove(directional);
+                    }
+                } else {
+                    while (!grid.RobberFriendlyMove(directional)) {
+                        cout << "Invalid move. Please enter a valid move." << endl;
+                        cin >> directional;
+                    }
                 }
                 grid.print();
                 cout << endl;
