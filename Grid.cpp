@@ -569,11 +569,25 @@ double Grid::evaluatePosition(int row, int col) {
     double score = 0.0;
 
     for (int i = 0; i < copNum; i++) {
-        double dist = sqrt(pow(row - cops[i]->row, 2) + pow(col - cops[i]->col, 2));
+        double dist = abs(row - cops[i]->row) + abs(col - cops[i]->col);
         score += dist;
     }
 
-    //add boundary consideration?
+    /*
+
+    //if position definitely loses on next turn, set score to -1 (ggs buddy)
+    if (grid[row + 1][col].hasCop() || grid[row - 1][col].hasCop() || grid[row][col - 1].hasCop() || grid[row][col - 1].hasCop()) {
+        score = -1;
+    }
+
+    */
+
+    /*add boundary consideration?
+    score -= std::log(col + 1);           // Penalty for proximity to left edge
+    score -= std::log(gridSize - col);    // Penalty for proximity to right edge
+    score -= std::log(row + 1);           // Penalty for proximity to top edge
+    score -= std::log(gridSize - row);    // Penalty for proximity to bottom edge
+    */
 
     return score;
 }
@@ -593,6 +607,8 @@ pair<char, char> Grid::abelEvasionMoves() {
             bestPos = position;
         }
     }
+
+    cout << "Best score of position is: " << bestScore << endl;
 
     if (bestPos.first == row && bestPos.second == col) {
         return {'e', 'e'};

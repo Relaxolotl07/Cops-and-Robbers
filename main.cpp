@@ -146,11 +146,11 @@ int main() {
                         if (strategy == 3) {
                             //Robber first move
                             directional = grid.abelEvasionMoves().first;
-                            cout << "The robber will move " << (directional == 'w' ? "north" : directional == 'd' ? "east" : directional == 's' ? "south" : "west") << endl;
+                            cout << "The robber will move " << (directional == 'w' ? "north" : directional == 'd' ? "east" : directional == 's' ? "south" : directional == 'a' ? "west" : "none") << endl;
                             grid.RobberFriendlyMove(directional);
                             //Robber second move
                             directional = grid.abelEvasionMoves().second;
-                            cout << "The robber will move " << (directional == 'w' ? "north" : directional == 'd' ? "east" : directional == 's' ? "south" : "west") << endl;
+                            cout << "The robber will move " << (directional == 'w' ? "north" : directional == 'd' ? "east" : directional == 's' ? "south" : directional == 'a' ? "west" : "none") << endl;
                             grid.RobberFriendlyMove(directional);
 
                             cout << endl;
