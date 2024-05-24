@@ -309,8 +309,9 @@ bool Grid::move(int col, int row, int newCol, int newRow, bool isCop) {
                 }
             }
             */
-
-            insertGridPos();
+            
+            // WIN STATE TEMPORARILY DISABLED
+            // insertGridPos();
             moves++;
             
             return true;
@@ -473,6 +474,8 @@ set<Node*> Grid::growCopROC(int timeStep) {
     return copROC;
 }
 
+
+
 //GREEDY ALGORITHM WITH VECTORS
 char Grid::greedyDirectionAlg() {
     
@@ -531,6 +534,8 @@ vector<double> Grid::greedyVectorizationAlg() {
     return direction;
 }
 
+
+
 //ABEL DISTANCE EVASION ALGORITHM
 vector<pair<int, int>> Grid::getPossibleMoves(int row, int col) {
         vector<pair<int, int>> moves;
@@ -568,26 +573,41 @@ vector<pair<int, int>> Grid::getPossibleMoves(int row, int col) {
 double Grid::evaluatePosition(int row, int col) {
     double score = 0.0;
 
+    //sum all the manhatton distances (intead of straight line b/c cops can't move that way anyways)
     for (int i = 0; i < copNum; i++) {
         double dist = abs(row - cops[i]->row) + abs(col - cops[i]->col);
         score += dist;
-    }
-
-    /*
+    }    
 
     //if position definitely loses on next turn, set score to -1 (ggs buddy)
-    if (grid[row + 1][col].hasCop() || grid[row - 1][col].hasCop() || grid[row][col - 1].hasCop() || grid[row][col - 1].hasCop()) {
-        score = -1;
+    if (((row > 0 && col > 0) && grid[row - 1][col - 1].hasCop()) || 
+    (col > 0 && grid[row][col - 1].hasCop()) || 
+    (row > 1 && col > 0 && grid[row - 2][col - 1].hasCop()) || 
+    (row > 0 && grid[row - 1][col].hasCop()) || 
+    (row > 0 && col > 1 && grid[row - 1][col - 2].hasCop())) {
+        //cout << "Robber will lose that, nope" << endl;
+        score = -10000.0;
     }
 
-    */
+    // add boundary consideration? (in developmental stages)
+    // this part doesn't really work
+    
+    score -= min(row, gridSize + 1 - row);
+    score -= min(col, gridSize + 1 - col);
 
-    /*add boundary consideration?
-    score -= std::log(col + 1);           // Penalty for proximity to left edge
-    score -= std::log(gridSize - col);    // Penalty for proximity to right edge
-    score -= std::log(row + 1);           // Penalty for proximity to top edge
-    score -= std::log(gridSize - row);    // Penalty for proximity to bottom edge
-    */
+    //don't go into corners
+    if ((row == 0 && col == 0) || 
+    (row == 0 && col == gridSize - 1) || 
+    (row == gridSize - 1 && col == 0) || 
+    (row == gridSize - 1 && col == gridSize - 1)) {
+        score = -10000.0; 
+    }
+
+    // score -= log(col + 1);           // Penalty for proximity to left edge
+    // score -= log(gridSize - col);    // Penalty for proximity to right edge
+    // score -= log(row + 1);           // Penalty for proximity to top edge
+    // score -= log(gridSize - row);    // Penalty for proximity to bottom edge
+    // */
 
     return score;
 }
@@ -596,7 +616,7 @@ pair<char, char> Grid::abelEvasionMoves() {
     int row = robber->row;
     int col = robber->col;
 
-    pair<int, int> bestPos = {row, col};
+    pair<int, int> bestPos = {row, col}; //default to stay still
     double bestScore = numeric_limits<double>::lowest(); //unsure
 
     vector<pair<int, int>> positions = getPossibleMoves(row, col);
@@ -608,7 +628,8 @@ pair<char, char> Grid::abelEvasionMoves() {
         }
     }
 
-    cout << "Best score of position is: " << bestScore << endl;
+    //testing
+    cout << "Best scores of all positions is: " << bestScore << endl;
 
     if (bestPos.first == row && bestPos.second == col) {
         return {'e', 'e'};
@@ -641,7 +662,6 @@ pair<char, char> Grid::abelEvasionMoves() {
     } else {
         return {'e', 'e'}; //MAKES ROBBER STAY STILL if some shit doesn't work
     }
-    //trash brute force here
 }
 
 int Grid::findRobberQuadrant() {
