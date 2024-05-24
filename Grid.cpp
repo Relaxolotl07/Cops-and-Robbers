@@ -228,29 +228,32 @@ bool Grid::RobberFriendlyMove(char direction) {
     return true;
 }
 
-bool Grid::CopFriendlyMove(vector<char> directions) {
-    for (int i = 0; i < copNum; i++) {
-        if (directions[i] == 'w') {
+bool Grid::CopFriendlyMove(list<char> directions) {
+    list<char>::iterator iter;
+    char letter;
+    for (iter = directions.begin(); iter!= directions.end(); iter) {
+        letter = *iter;
+        if (letter == 'w') {
             if (!checkMovement(cops[i]->getX(), cops[i]->getY(), cops[i]->getX(), cops[i]->getY() - 1)) {
                 cout << "Cop " << i + 1 << " is out of bounds." << endl;
                 return false;
             }
-        } else if (directions[i] == 'd') {
+        } else if (letter == 'd') {
             if (!checkMovement(cops[i]->getX(), cops[i]->getY(), cops[i]->getX() + 1, cops[i]->getY())) {
                 cout << "Cop " << i + 1 << " is out of bounds." << endl;
                 return false;
             }
-        } else if (directions[i] == 's') {
+        } else if (letter == 's') {
             if (!checkMovement(cops[i]->getX(), cops[i]->getY(), cops[i]->getX(), cops[i]->getY() + 1)) {
                 cout << "Cop " << i + 1 << " is out of bounds." << endl;
                 return false;
             }
-        } else if (directions[i] == 'a') {
+        } else if (letter == 'a') {
             if (!checkMovement(cops[i]->getX(), cops[i]->getY(), cops[i]->getX() - 1, cops[i]->getY())) {
                 cout << "Cop " << i + 1 << " is out of bounds." << endl;
                 return false;
             }
-        } else if (directions[i] != 'e') {
+        } else if (letter != 'e') {
             cout << "Invalid direction" << endl;
             return false;
         }
@@ -573,13 +576,7 @@ vector<pair<int, int>> Grid::getPossibleMoves(int row, int col) {
 double Grid::evaluatePosition(int row, int col) {
     double score = 0.0;
 
-    //sum all the manhatton distances (intead of straight line b/c cops can't move that way anyways)
-    for (int i = 0; i < copNum; i++) {
-        double dist = abs(row - cops[i]->row) + abs(col - cops[i]->col);
-        score += dist;
-    }    
-
-    //if position definitely loses on next turn, set score to -1 (ggs buddy)
+    //if position definitely loses on next turn, set low score 
     if (((row > 0 && col > 0) && grid[row - 1][col - 1].hasCop()) || 
     (col > 0 && grid[row][col - 1].hasCop()) || 
     (row > 1 && col > 0 && grid[row - 2][col - 1].hasCop()) || 
@@ -589,19 +586,25 @@ double Grid::evaluatePosition(int row, int col) {
         score = -10000.0;
     }
 
-    // add boundary consideration? (in developmental stages)
-    // this part doesn't really work
-    
-    score -= min(row, gridSize + 1 - row);
-    score -= min(col, gridSize + 1 - col);
-
     //don't go into corners
     if ((row == 0 && col == 0) || 
     (row == 0 && col == gridSize - 1) || 
     (row == gridSize - 1 && col == 0) || 
     (row == gridSize - 1 && col == gridSize - 1)) {
-        score = -10000.0; 
+        score = -5000.0; 
     }
+    
+    // add boundary influence? (in developmental stages)
+    // more penalty as you leave center of grid
+    score -= sqrt(pow((row - double(gridSize) / 2.0) , 2) + pow ((col - double(gridSize) / 2.0) , 2));
+    // score -= min(row, gridSize + 1 - row);
+    // score -= min(col, gridSize + 1 - col);
+
+    //FINALLY sum all the manhatton distances (intead of straight line b/c cops can't move that way anyways)
+    for (int i = 0; i < copNum; i++) {
+        double dist = abs(row - cops[i]->row) + abs(col - cops[i]->col);
+        score += dist;
+    }  
 
     // score -= log(col + 1);           // Penalty for proximity to left edge
     // score -= log(gridSize - col);    // Penalty for proximity to right edge
@@ -677,6 +680,7 @@ int Grid::findRobberQuadrant() {
 
 void Grid::reorderCops() {
     int quadrant = findRobberQuadrant();
+    cout << "robber at quadrant " << quadrant << endl;
     
     int count = 0;
 
@@ -726,14 +730,19 @@ void Grid::reorderCops() {
             cout << "quadrant invalid lmfao" << endl;
             break;
     }
+
+    cout << "Cops reordered" << endl;
+    this->print();
+    cout << endl;
 }
 
-vector<pair<int, char>> Grid::findBezierCopMoves() {
-    vector<pair<int, char>> moves; // (copNumber, move) pair, start with (0, ' ')
+list<char> Grid::findBezierCopMoves() {
+    list<char> moves; // (copNumber, move) pair, start with (0, ' ')
     reorderCops();
     for (int i = 0; i < copNum; i++) {
         char move = bezierCopMove(i);
-        moves.push_back({i, move});
+        cout << "Cop " << i + 1 << " moves " << move << endl;
+        moves.push_back(move);
     }
     return moves;
 }
@@ -741,6 +750,7 @@ vector<pair<int, char>> Grid::findBezierCopMoves() {
 char Grid::bezierCopMove(int copNumber) {
     // ** vectorize and find closest move to point
     pair<int, int> bezierPoint = calculateCopBezier(copNumber); // uses row, col (y, x)
+    cout << "Bezier point is (" << bezierPoint.first << ", " << bezierPoint.second << ")" << endl;
     
     // move the cop to its bezier point
     const int row = cops[copNumber]->row;
@@ -748,6 +758,9 @@ char Grid::bezierCopMove(int copNumber) {
 
     double yVector = bezierPoint.first - row;
     double xVector = bezierPoint.second - col;
+
+    cout << "yVector is " << yVector << endl;
+    cout << "xVector is " << xVector << endl;
 
     // if the cop is already at the bezier point, return 'e'
     if (abs(yVector) <= 1 && abs(xVector) <= 1) {

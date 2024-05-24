@@ -53,7 +53,7 @@ class Grid {
 
         bool RobberFriendlyMove(char direction);
 
-        bool CopFriendlyMove(vector<char> directions);
+        bool CopFriendlyMove(list<char> directions);
 
         bool move(int row, int col, int newX, int newY, bool isCop);
 
@@ -86,7 +86,7 @@ class Grid {
 
         void reorderCops(); // for a given robber position
 
-        vector<pair<int, char>> findBezierCopMoves();
+        list<char> findBezierCopMoves();
 
         char bezierCopMove(int copNumber);
 
